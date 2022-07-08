@@ -36,3 +36,32 @@
     transform: rotate(360deg);
   }
 }
+
+.color-nav {
+  background-color: #006666;
+  margin-bottom: 18px;
+}
+
+.main-content {
+  justify-content: center;
+  align-items: center;
+}
+
+.submit-button {
+  background-color: #006666 !important;
+  margin: 8px !important;
+}
+
+#classAreaParent {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.classArea {
+  background-color: lightslategray;
+  height: 100vh;
+  border: 2px solid #000;
+  border-radius: 15px;
+  -moz-border-radius: 15px;
+}
