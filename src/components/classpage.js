@@ -2,6 +2,9 @@ import '../App.css';
 import React from "react";
 import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
+import ChatBox from './chatbox'
+import Discussions from './discussions'
+import NotesRepo from './noterepo';
 
 
 class ClassPage extends React.Component {
@@ -10,19 +13,21 @@ class ClassPage extends React.Component {
     this.classCode = props.classCode;
     this.state = {
       cTab: "Chat",
+      inMyClass: true,
+      addBtn: "Add to My Classes"
     }
   }
 
   renderTab(currentTab) {
     switch(currentTab){
       case "Chat":
-        return <p>THIS IS CHAT</p>;
+        return <ChatBox />;
         break;
       case "Discussion":
-        return <p>THIS IS DISCUSSION</p>;
+        return <Discussions />;
         break;
       case "Notes":
-        return <p>THIS IS NOTES</p>;
+        return <NotesRepo />;
         break;
       default:
         return <p>DEFAULT</p>;
@@ -33,7 +38,18 @@ class ClassPage extends React.Component {
   render() {
     return (
     <>
-      <Button style={{float: "right",marginRight: "10px",backgroundColor: "#006666"}} >Add to My Classes</Button>
+      <Button 
+      style={{float: "right",marginRight: "10px",backgroundColor: "#006666"}} 
+      onClick={() => {
+        if (this.state.inMyClass)
+          this.setState({inMyClass: false, addBtn: "Add to My Classes"})
+        else 
+          this.setState({inMyClass: true, addBtn: "Remove from My Classes"})
+          
+      }}
+      >
+        {this.state.addBtn}
+      </Button>
       <h1>{this.classCode}</h1>
       <div>
         <Nav justify variant="tabs" defaultActiveKey="link-1">

@@ -62,6 +62,83 @@
   background-color: lightslategray;
   height: 100vh;
   border: 2px solid #000;
+  padding: 7px;
   border-radius: 15px;
   -moz-border-radius: 15px;
+}
+
+#vote {
+  margin-right: 10px;
+}
+
+#vote:hover {
+  background-color: #282c34;
+  color: azure;
+}
+
+#DCard:hover {
+  background-color: hsl(0, 0%, 74%);
+}
+
+.Messages-list {
+  padding: 20px 0;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  list-style: none;
+  padding-left: 0;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.Messages-message {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.Messages-message.currentMember {
+  flex-direction: row-reverse;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.Message-content {
+  display: inline-block;
+}
+
+.currentMember > .Message-content {
+  align-items: flex-end;
+}
+
+.Message-content > .username {
+  display: block;
+  color: gray;
+  font-size: 14px;
+  padding-bottom: 4px;
+}
+
+.Message-content > .text {
+  padding: 10px;
+  max-width: 400px;
+  margin: 0;
+  border-radius: 12px;
+  background-color: hsl(243, 60%, 49%);
+  color: white;
+  display: inline-block;
+}
+
+input {
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid black;
+  flex-grow: 1;
+  width: 50vw;
+}
+
+#send-btn {
+  background-color: #006666;
+  color: white;
+  border-radius: 15%;
 }

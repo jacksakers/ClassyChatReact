@@ -28,7 +28,8 @@ const MyClasses = () => {
 function ClassCard(props) {
   return (<Card style={{
             textAlign: "left"
-            }}>
+            }}
+            id='DCard'>
             <Card.Header>{props.college}</Card.Header>
             <Card.Body>
               <Card.Title>{props.classCode}</Card.Title>
