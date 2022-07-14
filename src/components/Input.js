@@ -19,8 +19,9 @@ class Input extends Component {
 
   onSubmit(e) {
     e.preventDefault();
+    console.log(this.state.text);
     this.setState({text: ""});
-    this.props.onSendMessage(this.state.text);
+    //this.props.onSendMessage(this.state.text);
   }
 
   render() {

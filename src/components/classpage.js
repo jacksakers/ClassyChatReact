@@ -13,7 +13,7 @@ class ClassPage extends React.Component {
     this.classCode = props.classCode;
     this.state = {
       cTab: "Chat",
-      inMyClass: true,
+      inMyClass: false,
       addBtn: "Add to My Classes"
     }
   }
@@ -45,7 +45,6 @@ class ClassPage extends React.Component {
           this.setState({inMyClass: false, addBtn: "Add to My Classes"})
         else 
           this.setState({inMyClass: true, addBtn: "Remove from My Classes"})
-          
       }}
       >
         {this.state.addBtn}

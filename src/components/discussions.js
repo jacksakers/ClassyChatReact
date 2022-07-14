@@ -7,54 +7,104 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Input from "./Input";
 import { Button } from 'bootstrap';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
 
 class Discussions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cardClicked: false,
+      content: "Cards",
+      question: "",
+      description: ""
     }
   }
 
-  handleClick() {
-    if (this.state.cardClicked)
-      this.setState({cardClicked: false});
-    else 
-      this.setState({cardClicked: true});
+  onQChange(e) {
+    this.setState({question: e.target.value});
+  }
+
+  onDChange(e) {
+    this.setState({description: e.target.value});
+  }
+
+  onSubmit(e) {
+    e.preventDefault();
+    console.log(this.state.question + ": " + this.state.description);
+    this.setState({text: ""});
+    //this.props.onSendMessage(this.state.text);
   }
 
   renderContent() {
-    if (!this.state.cardClicked) {
-      return <>
-        <Row>
-          <button
-                style={{
-                  width: "180px",
-                  margin: "10px"
-                }}
-                >Create Discussion</button>
-        </Row>
-        <Row xs={1} md={1} className="g-4">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <Col>
-              <DiscussionCard 
-                  college="University of South Carolina" 
-                  question="How do you calculate the integral of a function?" 
-                  didClick={() => {this.handleClick()}}/>
-            </Col>
-          ))}
-        </Row></>;
-    } else {
-      return <>
+    switch (this.state.content) {
+      default:
+      case "Cards":
+        return <>
+            <Row>
+              <button
+                    style={{
+                      width: "180px",
+                      margin: "10px"
+                    }}
+                    onClick={() => {this.setState({content: "Create"})}}
+                    >Create Discussion</button>
+            </Row>
+            <Row xs={1} md={1} className="g-4">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <Col>
+                  <DiscussionCard 
+                      college="University of South Carolina" 
+                      question="How do you calculate the integral of a function?" 
+                      didClick={() => {this.setState({content: "Card"})}}/>
+                </Col>
+              ))}
+            </Row>
+          </>;
+      case "Card":
+        return <>
+            <button 
+              onClick={() => this.setState({content: "Cards"})}
+              style={{float: "left", marginRight: "5px"}}
+              >Back</button>
+            <DiscussionCardExpanded 
+              college="University of South Carolina" 
+              question="How do you calculate the integral of a function?" 
+              />
+          </>;
+      case "Create":
+        return <>
               <button 
-                onClick={() => this.handleClick()}
-                style={{float: "left", marginRight: "5px"}}
+                onClick={() => this.setState({content: "Cards"})}
+                style={{float: "left", margin: "15px"}}
                 >Back</button>
-              <DiscussionCardExpanded 
-                college="University of South Carolina" 
-                question="How do you calculate the integral of a function?" 
-                />
-            </>
+              <Form
+                style={{padding: "15px"}}
+                onSubmit={e => this.onSubmit(e)}>
+                <h2 style={{color: "white", backgroundColor: "#006666", borderRadius: "10px"}}>Create a Discussion:</h2> 
+                <FloatingLabel
+                  controlId="floatingTextarea"
+                  label="Question"
+                  className="mb-3"
+                >
+                  <Form.Control 
+                  as="textarea" 
+                  onChange={e => this.onQChange(e)}
+                  placeholder="Leave a comment here"/>
+                </FloatingLabel>
+                <FloatingLabel controlId="floatingTextarea2" label="Description (optional)">
+                  <Form.Control
+                    as="textarea"
+                    style={{ height: '100px' }}
+                    onChange={e => this.onDChange(e)}
+                  />
+                </FloatingLabel>
+                <button 
+                  id="send-btn"
+                  style={{ marginTop: "10px" }}
+                  onClick={() => {console.log("POST THAT!")}}
+                  >Post</button>
+              </Form>
+          </>;
     }
   }
 
@@ -96,6 +146,9 @@ function DiscussionCardExpanded(props) {
             }}>
             <Card.Body>
                 <Card.Title>{props.question}</Card.Title>
+                <Card.Text>
+                  This is a description of the question.
+                </Card.Text>
                 
             </Card.Body>
             <Card.Footer >
