@@ -47,6 +47,7 @@ class Discussions extends Component {
                       margin: "10px"
                     }}
                     onClick={() => {this.setState({content: "Create"})}}
+                    className="login-btn"
                     >Create Discussion</button>
             </Row>
             <Row xs={1} md={1} className="g-4">
@@ -65,6 +66,7 @@ class Discussions extends Component {
             <button 
               onClick={() => this.setState({content: "Cards"})}
               style={{float: "left", marginRight: "5px"}}
+              className="login-btn"
               >Back</button>
             <DiscussionCardExpanded 
               college="University of South Carolina" 
@@ -76,6 +78,7 @@ class Discussions extends Component {
               <button 
                 onClick={() => this.setState({content: "Cards"})}
                 style={{float: "left", margin: "15px"}}
+                className="login-btn"
                 >Back</button>
               <Form
                 style={{padding: "15px"}}

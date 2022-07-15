@@ -52,6 +52,16 @@
   margin: 8px !important;
 }
 
+.login-btn {
+  background-color: white;
+  color: black;
+}
+
+.login-btn:hover {
+  background-color: black;
+  color: white;
+}
+
 #classAreaParent {
   display: flex;
   flex-direction: column;
@@ -78,6 +88,10 @@
 
 #DCard:hover {
   background-color: hsl(0, 0%, 74%);
+}
+
+#loginlink:hover {
+  text-decoration: underline;
 }
 
 .Messages-list {

@@ -8,6 +8,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import React from 'react';
 import ClassPage from './components/classpage';
+import LogIn from './components/login';
 
 class App extends React.Component {
   chosenClass = "NULL";
@@ -15,6 +16,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       currentPage: "Search",
+      isLoggedIn: false,
     }
   }
   renderContent() {
@@ -27,6 +29,8 @@ class App extends React.Component {
         return <MyClasses />;
       case "ClassPage":
         return <ClassPage classCode={this.chosenClass} />;
+      case "LogIn":
+        return <LogIn />;
       default:
         return <SearchArea />;
     }
@@ -42,7 +46,11 @@ class App extends React.Component {
             <Nav.Link onClick={() => this.setState({currentPage: "MyClasses"})}>My Classes</Nav.Link>
           </Nav>
           <Navbar.Text>
-              Welcome, <a href="#login">jaksak</a>
+              Welcome, <span
+                        onClick={() => this.setState({currentPage: "LogIn"})}
+                        style={{color: "white"}}
+                        id='loginlink'
+                        >jaksak</span>
           </Navbar.Text>
           </Container>
         </Navbar>

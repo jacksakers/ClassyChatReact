@@ -40,6 +40,7 @@ class NotesRepo extends Component {
                 margin: "10px"
               }}
               onClick={() => this.setState({content: "Create"})}
+              className="login-btn"
               >Upload Notes</button>
           </Row>
           <Row xs={1} md={1} className="g-4">
@@ -56,6 +57,7 @@ class NotesRepo extends Component {
           <button 
             onClick={() => this.setState({content: "Cards"})}
             style={{float: "left", marginRight: "5px"}}
+            className="login-btn"
             >Back</button>
           <NotesCardExpanded 
                 title="Chapter 10 Notes"
@@ -66,6 +68,7 @@ class NotesRepo extends Component {
           <button 
             onClick={() => this.setState({content: "Cards"})}
             style={{float: "left", margin: "15px"}}
+            className="login-btn"
             >Back</button>
           <Form
             style={{padding: "15px"}}
