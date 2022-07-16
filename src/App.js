@@ -9,6 +9,7 @@ import Nav from 'react-bootstrap/Nav'
 import React from 'react';
 import ClassPage from './components/classpage';
 import LogIn from './components/login';
+import { logout } from './firebase';
 
 class App extends React.Component {
   chosenClass = "NULL";
@@ -16,13 +17,17 @@ class App extends React.Component {
     super(props);
     this.state = {
       currentPage: "Search",
-      isLoggedIn: true,
-      username: "jaksak"
+      isLoggedIn: false,
+      username: "GUEST"
     }
   }
 
   handleClassClick() {
     this.setState({currentPage: "ClassPage"})
+  }
+
+  handleLogIn(uName) {
+    this.setState({isLoggedIn: true, username: uName})
   }
 
   renderContent() {
@@ -32,17 +37,23 @@ class App extends React.Component {
                 onPageChange={() => this.setState({ currentPage: "ClassPage" })}
                 chooseClass={(value) => this.chosenClass = value} />;
       case "MyClasses":
-        return <MyClasses handleClassClick={() => this.handleClassClick()}/>;
+        return <MyClasses 
+                  handleClassClick={() => this.handleClassClick()}
+                  goToLogIn={() => this.setState({currentPage: "LogIn"})}/>;
       case "ClassPage":
         return <ClassPage classCode={this.chosenClass} />;
       case "LogIn":
         if (!this.state.isLoggedIn) {
-          return <LogIn />;
+          return <LogIn didLogIn={(uName) => this.handleLogIn(uName)}/>;
         } else {
           return <><h2>Hey {this.state.username}, You Are Logged In!</h2> 
             <button 
               className='login-btn'
-              onClick={() => this.setState({isLoggedIn: false})}>Log Out</button></>;
+              onClick={() => {
+                this.setState({isLoggedIn: false, username: "GUEST"});
+                logout();
+              }}
+              >Log Out</button></>;
         }
       default:
         return <SearchArea />;

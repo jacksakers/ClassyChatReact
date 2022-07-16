@@ -4,29 +4,38 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
+import { auth } from '../firebase';
   
 const MyClasses = (props) => {
-  return (
-    <>
-      <h1>My Classes:</h1>
-      <Container style={{maxWidth: "900px"}}>
-      <div id='classAreaParent'>
-        <div className="classArea">
-        <Row xs={1} md={1} className="g-4">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <Col>
-              <ClassCard 
-                college="University of South Carolina" 
-                classCode="ENGL 101" 
-                didClick={() => props.handleClassClick()}/>
-            </Col>
-          ))}
-        </Row>
+  if (auth.currentUser != null) {
+    return (
+      <>
+        <h1>My Classes:</h1>
+        <Container style={{maxWidth: "900px"}}>
+        <div id='classAreaParent'>
+          <div className="classArea">
+          <Row xs={1} md={1} className="g-4">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Col>
+                <ClassCard 
+                  college="University of South Carolina" 
+                  classCode="ENGL 101" 
+                  didClick={() => props.handleClassClick()}/>
+              </Col>
+            ))}
+          </Row>
+          </div>
         </div>
-      </div>
-      </Container>
-    </>
-  )
+        </Container>
+      </>
+    );
+  } else {
+    return (<h1>You have to <button 
+                              onClick={() => props.goToLogIn()}
+                              className='login-btn'
+                              >Log In</button> to view your classes.</h1>);
+  }
+
 };
   
 

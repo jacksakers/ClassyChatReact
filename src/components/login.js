@@ -9,6 +9,8 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
+import { auth, registerWithEmailAndPassword, logInWithEmailAndPassword } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 class LogIn extends Component {
   constructor(props) {
@@ -33,14 +35,32 @@ class LogIn extends Component {
     this.setState({cPassword: e.target.value});
   }
 
-  onSubmit(e) {
+  async onLogInSubmit(e) {
     e.preventDefault();
-    console.log(this.state.username);
+    let fakeEmail = this.state.username + "@example.com";
+    let _password = this.state.password;
+    await logInWithEmailAndPassword(fakeEmail, _password);
+    if (auth.currentUser)
+      this.props.didLogIn(this.state.username);
+  }
+
+  async onSignUpSubmit(e) {
+    e.preventDefault();
+    let fakeEmail = this.state.username + "@example.com";
+    let _username = this.state.username;
+    let _password = this.state.password;
+    if (this.state.password !== this.state.cPassword) {
+      alert("Whoops, the passwords do not match!");
+      return;
+    }
+    await registerWithEmailAndPassword(_username, fakeEmail, _password);
+    if (auth.currentUser)
+      this.props.didLogIn(this.state.username);
   }
 
   LogInForm() {
     return <><Form
-        onSubmit={e => this.onSubmit(e)}
+        onSubmit={e => this.onLogInSubmit(e)}
         >
           <div 
           style={{margin: "10px", fontSize: "25px", color: "white"}}
@@ -78,7 +98,7 @@ class LogIn extends Component {
 
   SignInForm() {
     return <><Form
-        onSubmit={e => this.onSubmit(e)}
+        onSubmit={e => this.onSignUpSubmit(e)}
         >
           <div 
           style={{margin: "10px", fontSize: "25px", color: "white"}}
