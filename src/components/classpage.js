@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button'
 import ChatBox from './chatbox'
 import Discussions from './discussions'
 import NotesRepo from './noterepo';
+import Container from 'react-bootstrap/esm/Container';
 
 
 class ClassPage extends React.Component {
@@ -20,6 +21,7 @@ class ClassPage extends React.Component {
 
   renderTab(currentTab) {
     switch(currentTab){
+      default:
       case "Chat":
         return <ChatBox />;
         break;
@@ -28,9 +30,6 @@ class ClassPage extends React.Component {
         break;
       case "Notes":
         return <NotesRepo />;
-        break;
-      default:
-        return <p>DEFAULT</p>;
         break;
     }
   }
@@ -49,11 +48,14 @@ class ClassPage extends React.Component {
       >
         {this.state.addBtn}
       </Button>
-      <h1>{this.classCode}</h1>
+      <h1>{this.classCode} <span style={{color: "lightgray"}}>@ University of South Carolina</span></h1>
+      <Container style={{maxWidth: "1000px"}}>
       <div>
         <Nav justify variant="tabs" defaultActiveKey="link-1">
             <Nav.Item>
-                <Nav.Link onClick={() => this.setState({ cTab: "Chat" })} eventKey="link-1">Live Chat</Nav.Link>
+                <Nav.Link 
+                  onClick={() => this.setState({ cTab: "Chat" })} 
+                  eventKey="link-1">Live Chat</Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link onClick={() => this.setState({ cTab: "Discussion" })} eventKey="link-2">Discussions</Nav.Link>
@@ -66,6 +68,7 @@ class ClassPage extends React.Component {
         {this.renderTab(this.state.cTab)}
 
       </div>
+      </Container>
     </>
     )
   }

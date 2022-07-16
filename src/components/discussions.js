@@ -9,6 +9,7 @@ import Input from "./Input";
 import { Button } from 'bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/esm/Container';
 
 class Discussions extends Component {
   constructor(props) {

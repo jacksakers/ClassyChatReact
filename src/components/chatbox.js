@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import '../App.css';
 import Messages from "./Messages";
 import Input from "./Input";
+import Container from 'react-bootstrap/esm/Container';
+import Col from 'react-bootstrap/esm/Col';
+import Row from 'react-bootstrap/esm/Row';
 
 class ChatBox extends Component {
     constructor(props) {
@@ -22,22 +25,80 @@ class ChatBox extends Component {
               username: "jaksak"
             }
           },
+          {
+            text: "hehehe",
+            member: {
+              color: "blue",
+              username: "jaksak"
+            }
+          },
+          {
+            text: "hehehe",
+            member: {
+              color: "blue",
+              username: "jaksak"
+            }
+          },
+          {
+            text: "hehehe",
+            member: {
+              color: "blue",
+              username: "jaksak"
+            }
+          },
+          {
+            text: "hehehe",
+            member: {
+              color: "blue",
+              username: "jaksak"
+            }
+          },
+          {
+            text: "hehehe",
+            member: {
+              color: "blue",
+              username: "jaksak"
+            }
+          },
         ],
         member: {
           username: "jaksak",
           color: "red",
-        }
+        },
       }
+    }
+
+    messagesEnd = null;
+
+    scrollToBottom = () => {
+      this.messagesEnd.scrollIntoView();
+    }
+    
+    componentDidMount() {
+      this.scrollToBottom();
+    }
+
+    setMessageEnd(element) {
+      this.messagesEnd = element;
     }
 
     render() {
       return (
         <>
-          <Messages
-            messages={this.state.messages}
-            currentMember={this.state.member}
-          />
-          <Input text="Send" />
+          <Col>
+          <Row>
+            <div className='scroll'>
+              <Messages
+                messages={this.state.messages}
+                currentMember={this.state.member}
+                messagesEnd={(element) => this.setMessageEnd(element)}
+              />
+            </div>
+          </Row>
+          <Row>
+            <Input text="Send" />
+          </Row>
+          </Col>
         </>
       );
     }

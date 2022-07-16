@@ -20,7 +20,9 @@ class SearchArea extends React.Component {
 
   render() {
       return (
-          <Container className='main-content'>
+          <Container 
+            className='main-content'
+            style={{maxWidth: "700px"}}>
               <Row>
                 <h2>Choose Your School:</h2>
               </Row>
@@ -31,7 +33,7 @@ class SearchArea extends React.Component {
                   />
               </Row>
               <Row>
-                <h2>Select Your Class:</h2>
+                <h2 style={{marginTop: "10px"}}>Select Your Class:</h2>
               </Row>
               <Row>
                 <Select
@@ -39,7 +41,11 @@ class SearchArea extends React.Component {
                   onChange={opt => this.props.chooseClass(opt.label)}
                   />
               </Row>
-              <Button className='submit-button' onClick={() => this.props.onPageChange()}>Go To Class</Button>
+              <Button 
+                id='send-btn' 
+                onClick={() => this.props.onPageChange()}
+                style={{marginTop: "10px"}}
+                >Go To Class</Button>
             </Container>
         );
   }

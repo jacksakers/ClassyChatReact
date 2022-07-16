@@ -43,7 +43,7 @@ class NotesRepo extends Component {
               className="login-btn"
               >Upload Notes</button>
           </Row>
-          <Row xs={1} md={1} className="g-4">
+          <Row xs={1} md={2} className="g-4">
             {Array.from({ length: 4 }).map((_, idx) => (
               <Col>
                 <NotesCard 

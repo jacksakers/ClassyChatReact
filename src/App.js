@@ -16,9 +16,15 @@ class App extends React.Component {
     super(props);
     this.state = {
       currentPage: "Search",
-      isLoggedIn: false,
+      isLoggedIn: true,
+      username: "jaksak"
     }
   }
+
+  handleClassClick() {
+    this.setState({currentPage: "ClassPage"})
+  }
+
   renderContent() {
     switch(this.state.currentPage) {
       case "Search":
@@ -26,11 +32,18 @@ class App extends React.Component {
                 onPageChange={() => this.setState({ currentPage: "ClassPage" })}
                 chooseClass={(value) => this.chosenClass = value} />;
       case "MyClasses":
-        return <MyClasses />;
+        return <MyClasses handleClassClick={() => this.handleClassClick()}/>;
       case "ClassPage":
         return <ClassPage classCode={this.chosenClass} />;
       case "LogIn":
-        return <LogIn />;
+        if (!this.state.isLoggedIn) {
+          return <LogIn />;
+        } else {
+          return <><h2>Hey {this.state.username}, You Are Logged In!</h2> 
+            <button 
+              className='login-btn'
+              onClick={() => this.setState({isLoggedIn: false})}>Log Out</button></>;
+        }
       default:
         return <SearchArea />;
     }
@@ -50,7 +63,7 @@ class App extends React.Component {
                         onClick={() => this.setState({currentPage: "LogIn"})}
                         style={{color: "white"}}
                         id='loginlink'
-                        >jaksak</span>
+                        >{this.state.username}</span>
           </Navbar.Text>
           </Container>
         </Navbar>
