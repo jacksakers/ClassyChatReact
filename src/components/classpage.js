@@ -24,13 +24,10 @@ class ClassPage extends React.Component {
       default:
       case "Chat":
         return <ChatBox />;
-        break;
       case "Discussion":
         return <Discussions />;
-        break;
       case "Notes":
         return <NotesRepo />;
-        break;
     }
   }
 

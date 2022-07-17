@@ -35,7 +35,7 @@ class App extends React.Component {
       case "Search":
         return <SearchArea 
                 onPageChange={() => this.setState({ currentPage: "ClassPage" })}
-                chooseClass={(value) => this.chosenClass = value} />;
+                passClass={(value) => this.chosenClass = value.class} />;
       case "MyClasses":
         return <MyClasses 
                   handleClassClick={() => this.handleClassClick()}

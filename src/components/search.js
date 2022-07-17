@@ -4,19 +4,74 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import Select from 'react-select';  
+import CreatableSelect from 'react-select/creatable';
+import { ActionMeta, OnChangeValue } from 'react-select';
 import App from "../App";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
-const collegeList = [
-    { label: 'University of South Carolina'},
-];
-
-const classList = [
-    { label: 'ENGL 101'},
-    { label: 'MATH 242'}
-]
-  
+const collegeRef = collection(db, "colleges");
+const collegeQ = query(collegeRef);
+const classRef = collection(db, "classes");
 
 class SearchArea extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      classDisabled: true,
+      collegeList: [],
+      classList: [],
+      chosenCollege: "NULL",
+      buttonDisabled: true
+    }
+  }
+
+  async getCollege() {
+    const querySnapshot = await getDocs(collegeQ);
+    console.log(this.state.collegeList);
+    this.state.collegeList = [];
+    let newList = [];
+    querySnapshot.forEach((doc) => {
+      newList.push({label: doc.id});
+      console.log(doc.id);
+    });
+    this.setState({collegeList: newList})
+  }
+
+  async getClasses(college) {
+    const classQ = query(classRef, where("school", "==", college));
+    const querySnapshot = await getDocs(classQ);
+    this.state.classList = [];
+    querySnapshot.forEach((doc) => {
+      this.state.classList.push({label: doc.id});
+      console.log("CLASSES:" + doc.id);
+    });
+  }
+
+  async handleCollegeChoose(college) {
+    if (college.__isNew__) {
+      await setDoc(doc(db, "colleges", college.label), {founding: 1801});
+      this.setState({classDisabled: false, 
+                    chosenCollege: college.label});
+    } else {
+      await this.getClasses(college.label);
+      this.setState({classDisabled: false, 
+                    chosenCollege: college.label});
+    };
+  }
+
+  async handleClassChoose(_class) {
+    if (_class.__isNew__) {
+      await setDoc(doc(db, "classes", _class.label), 
+                  {school: this.state.chosenCollege});
+      this.props.passClass({school: this.state.chosenCollege, class: _class.label});
+      this.setState({buttonDisabled: false});
+    } else {
+      this.props.passClass({school: this.state.chosenCollege, class: _class.label});
+      this.setState({buttonDisabled: false});
+    };
+  }
 
   render() {
       return (
@@ -27,25 +82,32 @@ class SearchArea extends React.Component {
                 <h2>Choose Your School:</h2>
               </Row>
               <Row>
-                <Select
-                  options={collegeList}
-                  onChange={opt => console.log(opt)}
+                <div onClick={() => this.getCollege()}>
+                <CreatableSelect
+                  options={this.state.collegeList}
+                  onChange={opt => this.handleCollegeChoose(opt)}
                   />
+                  </div>
               </Row>
               <Row>
                 <h2 style={{marginTop: "10px"}}>Select Your Class:</h2>
               </Row>
               <Row>
-                <Select
-                  options={classList}
-                  onChange={opt => this.props.chooseClass(opt.label)}
+                <CreatableSelect
+                  options={this.state.classList}
+                  onChange={opt => this.handleClassChoose(opt)}
+                  isDisabled={this.state.classDisabled}
                   />
               </Row>
               <Button 
                 id='send-btn' 
                 onClick={() => this.props.onPageChange()}
                 style={{marginTop: "10px"}}
+                disabled={this.state.buttonDisabled}
                 >Go To Class</Button>
+                <Row style={{marginTop: "30px"}}>
+                  <h3>If you do not find your school and/or your class, <u>log in</u> and add it by typing it in and clicking 'Create'.</h3>
+                </Row>
             </Container>
         );
   }
