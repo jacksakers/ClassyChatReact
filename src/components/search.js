@@ -23,6 +23,7 @@ class SearchArea extends React.Component {
       collegeList: [],
       classList: [],
       chosenCollege: "NULL",
+      chosenClass: "NULL",
       buttonDisabled: true
     }
   }
@@ -44,7 +45,8 @@ class SearchArea extends React.Component {
     const querySnapshot = await getDocs(classQ);
     this.state.classList = [];
     querySnapshot.forEach((doc) => {
-      this.state.classList.push({label: doc.id});
+      let justClass = doc.id.split(" @");
+      this.state.classList.push({label: justClass[0]});
       console.log("CLASSES:" + doc.id);
     });
   }
@@ -59,17 +61,22 @@ class SearchArea extends React.Component {
       this.setState({classDisabled: false, 
                     chosenCollege: college.label});
     };
+    if (this.state.chosenClass !== "NULL") {
+      this.setState({chosenClass: "NULL", buttonDisabled: true})
+    }
   }
 
   async handleClassChoose(_class) {
     if (_class.__isNew__) {
-      await setDoc(doc(db, "classes", _class.label), 
-                  {school: this.state.chosenCollege});
+      let classCode = (_class.label + " @ " + this.state.chosenCollege)
+      await setDoc(doc(db, "classes", classCode), 
+                  {school: this.state.chosenCollege,
+                  className: _class.label});
       this.props.passClass({school: this.state.chosenCollege, class: _class.label});
-      this.setState({buttonDisabled: false});
+      this.setState({chosenClass: _class.label, buttonDisabled: false});
     } else {
       this.props.passClass({school: this.state.chosenCollege, class: _class.label});
-      this.setState({buttonDisabled: false});
+      this.setState({chosenClass: _class.label, buttonDisabled: false});
     };
   }
 
@@ -106,7 +113,7 @@ class SearchArea extends React.Component {
                 disabled={this.state.buttonDisabled}
                 >Go To Class</Button>
                 <Row style={{marginTop: "30px"}}>
-                  <h3>If you do not find your school and/or your class, <u>log in</u> and add it by typing it in and clicking 'Create'.</h3>
+                  <h3>If you do not find your school and/or your class, add it by typing it in and clicking 'Create'.</h3>
                 </Row>
             </Container>
         );

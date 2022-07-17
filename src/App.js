@@ -9,21 +9,39 @@ import Nav from 'react-bootstrap/Nav'
 import React from 'react';
 import ClassPage from './components/classpage';
 import LogIn from './components/login';
-import { logout } from './firebase';
+import { db, auth, logout } from './firebase';
+import { doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
+
 
 class App extends React.Component {
-  chosenClass = "NULL";
   constructor(props) {
     super(props);
     this.state = {
       currentPage: "Search",
       isLoggedIn: false,
-      username: "GUEST"
+      username: "GUEST",
+    }
+    this.chosenClass = "NULL";
+    this.chosenSchool = "NULL";
+  }
+
+  async getUserName() {
+    const docRef = doc(db, "users", auth.currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      this.setState({username: docSnap.data().name, isLoggedIn: true})
+      console.log("CURRENT USERNAME: " + docSnap.data().name)
     }
   }
 
-  handleClassClick() {
-    this.setState({currentPage: "ClassPage"})
+  componentDidUpdate() {
+    if (auth.currentUser != null) {
+      if (this.state.username === "GUEST") {
+        this.getUserName();
+      }
+    }
+    console.log("UPDATED")
   }
 
   handleLogIn(uName) {
@@ -35,15 +53,18 @@ class App extends React.Component {
       case "Search":
         return <SearchArea 
                 onPageChange={() => this.setState({ currentPage: "ClassPage" })}
-                passClass={(value) => this.chosenClass = value.class} />;
+                passClass={(value) => {this.chosenClass = value.class;
+                                        this.chosenSchool = value.school;}} />;
       case "MyClasses":
         return <MyClasses 
-                  handleClassClick={() => this.handleClassClick()}
+                  passClass={(value) => {this.chosenClass = value.class;
+                                        this.chosenSchool = value.school;
+                                        this.setState({ currentPage: "ClassPage" });}}
                   goToLogIn={() => this.setState({currentPage: "LogIn"})}/>;
       case "ClassPage":
-        return <ClassPage classCode={this.chosenClass} />;
+        return <ClassPage currentClass={{school: this.chosenSchool, class: this.chosenClass}} />;
       case "LogIn":
-        if (!this.state.isLoggedIn) {
+        if (!auth.currentUser) {
           return <LogIn didLogIn={(uName) => this.handleLogIn(uName)}/>;
         } else {
           return <><h2>Hey {this.state.username}, You Are Logged In!</h2> 
@@ -67,7 +88,7 @@ class App extends React.Component {
           <Navbar.Brand onClick={() => this.setState({currentPage: "Search"})}>ClassyChat</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link onClick={() => this.setState({currentPage: "Search"})}>Search</Nav.Link>
-            <Nav.Link onClick={() => this.setState({currentPage: "MyClasses"})}>My Classes</Nav.Link>
+            <Nav.Link onClick={() => {this.setState({currentPage: "MyClasses"})}}>My Classes</Nav.Link>
           </Nav>
           <Navbar.Text>
               Welcome, <span

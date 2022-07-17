@@ -6,16 +6,20 @@ import ChatBox from './chatbox'
 import Discussions from './discussions'
 import NotesRepo from './noterepo';
 import Container from 'react-bootstrap/esm/Container';
-
+import { doc, getDoc } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
 class ClassPage extends React.Component {
   constructor(props) {
     super(props);
-    this.classCode = props.classCode;
     this.state = {
       cTab: "Chat",
       inMyClass: false,
-      addBtn: "Add to My Classes"
+      addBtn: "Add to My Classes",
+      currentClass: this.props.currentClass.class,
+      currentSchool: this.props.currentClass.school,
+      classCode: (this.props.currentClass.class + " @ " + this.props.currentClass.school)
     }
   }
 
@@ -29,6 +33,25 @@ class ClassPage extends React.Component {
       case "Notes":
         return <NotesRepo />;
     }
+  }
+
+  async checkIfInMyClasses() {
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    console.log("READ HAPPENED");
+    let _MyClasses = userSnap.data().MyClasses;
+    if (userSnap.exists()) {
+      for (let i in _MyClasses) {
+        if (_MyClasses[i] === this.state.classCode) {
+          this.setState({inMyClass: true, addBtn: "Remove from My Classes"});
+        }
+      }
+    }
+  }
+
+  componentDidMount() {
+    if (auth.currentUser != null)
+      this.checkIfInMyClasses();
   }
 
   render() {
@@ -45,7 +68,7 @@ class ClassPage extends React.Component {
       >
         {this.state.addBtn}
       </Button>
-      <h1>{this.classCode} <span style={{color: "lightgray"}}>@ University of South Carolina</span></h1>
+      <h1>{this.state.currentClass} <span style={{color: "lightgray"}}>@ {this.state.currentSchool}</span></h1>
       <Container style={{maxWidth: "1000px"}}>
       <div>
         <Nav justify variant="tabs" defaultActiveKey="link-1">

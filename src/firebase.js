@@ -10,6 +10,8 @@ import {
   getFirestore,
   query,
   getDocs,
+  setDoc,
+  doc,
   collection,
   where,
   addDoc,
@@ -38,7 +40,8 @@ const registerWithEmailAndPassword = async (name, email, password) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
-    await addDoc(collection(db, "users"), {
+    const userid = user.uid;
+    await setDoc(doc(db, "users", userid), {
       uid: user.uid,
       name,
       authProvider: "local",
