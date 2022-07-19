@@ -113,7 +113,8 @@ class SearchArea extends React.Component {
                 disabled={this.state.buttonDisabled}
                 >Go To Class</Button>
                 <Row style={{marginTop: "30px"}}>
-                  <h3>If you do not find your school and/or your class, add it by typing it in and clicking 'Create'.</h3>
+                  <h3 style={{fontSize: "20px"}}>Don't see your class or school?</h3> 
+                  <h3 style={{fontSize: "20px"}}>Add it by typing it in and clicking "Create"</h3>
                 </Row>
             </Container>
         );

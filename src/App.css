@@ -61,7 +61,16 @@
 
 .classArea {
   background-color: lightslategray;
-  height: 100vh;
+  height: 82vh;
+  border: 2px solid #000;
+  padding: 7px;
+  border-radius: 15px;
+  -moz-border-radius: 15px;
+}
+
+.disArea {
+  background-color: lightslategray;
+  height: 70vh;
   border: 2px solid #000;
   padding: 7px;
   border-radius: 15px;
@@ -154,11 +163,28 @@ input {
 }
 
 div.scroll {
-  max-height: 55vh;
+  max-height: 62vh;
   overflow-x: hidden;
   overflow-y: auto;
   text-align: center;
   padding: 5px;
   display: flex;
-  flex-direction: column-reverse;
+}
+
+div.scrollLonger {
+  max-height: 79vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+}
+
+div.scrollDis {
+  max-height: 60vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: center;
+  padding: 5px;
+  display: flex;
 }

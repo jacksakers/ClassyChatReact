@@ -51,16 +51,18 @@ class Discussions extends Component {
                     className="login-btn"
                     >Create Discussion</button>
             </Row>
-            <Row xs={1} md={1} className="g-4">
-              {Array.from({ length: 4 }).map((_, idx) => (
-                <Col>
-                  <DiscussionCard 
-                      college="University of South Carolina" 
-                      question="How do you calculate the integral of a function?" 
-                      didClick={() => {this.setState({content: "Card"})}}/>
-                </Col>
-              ))}
-            </Row>
+            <div className='scrollDis'>
+              <Row xs={1} md={1} className="g-4">
+                {Array.from({ length: 10 }).map((_, idx) => (
+                  <Col>
+                    <DiscussionCard 
+                        college="University of South Carolina" 
+                        question="How do you calculate the integral of a function?" 
+                        didClick={() => {this.setState({content: "Card"})}}/>
+                  </Col>
+                ))}
+              </Row>
+            </div>
           </>;
       case "Card":
         return <>
@@ -116,7 +118,7 @@ class Discussions extends Component {
     return (
       <>
         <div id='classAreaParent'>
-          <div className="classArea">
+          <div className="disArea">
             {this.renderContent()}
           </div>
         </div>

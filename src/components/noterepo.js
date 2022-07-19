@@ -43,15 +43,18 @@ class NotesRepo extends Component {
               className="login-btn"
               >Upload Notes</button>
           </Row>
-          <Row xs={1} md={2} className="g-4">
-            {Array.from({ length: 4 }).map((_, idx) => (
-              <Col>
-                <NotesCard 
-                    title="Chapter 10 Notes"
-                    didClick={() => this.setState({content: "Card"})}/>
-              </Col>
-            ))}
-          </Row></>;
+          <div className='scrollDis'>
+            <Row xs={1} md={2} className="g-4">
+              {Array.from({ length: 10 }).map((_, idx) => (
+                <Col>
+                  <NotesCard 
+                      title="Chapter 10 Notes"
+                      didClick={() => this.setState({content: "Card"})}/>
+                </Col>
+              ))}
+            </Row>
+          </div>
+          </>;
       case "Card":
         return <>
           <button 
@@ -102,7 +105,7 @@ class NotesRepo extends Component {
     return (
       <>
         <div id='classAreaParent'>
-          <div className="classArea">
+          <div className="disArea">
             {this.renderContent()}
           </div>
         </div>

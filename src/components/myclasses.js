@@ -9,42 +9,18 @@ import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
 
-let myColArray = [];
-
 class MyClasses extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      updated: false,
       displayArray: []
     }
   }
 
-  async getMyClasses() {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    const userSnap = await getDoc(userRef);
-    let _MyClasses = userSnap.data().MyClasses;
-    if (userSnap.exists()) {
-      for (let i in _MyClasses) {
-        let splitArray = _MyClasses[i].split(" @ ");
-        let justClass = splitArray[0];
-        let justSchool = splitArray[1];
-        myColArray.push(<Col>
-                          <ClassCard 
-                            college= {justSchool}
-                            classCode= {justClass}
-                            passClass= {() => this.props.passClass({school: justSchool, class: justClass})}/>
-                        </Col>)
-      }
+  renderMyClasses() {
+    if (this.state.displayArray.length === 0) {
+      this.setState({displayArray: this.props.arrayToDisplay})
     }
-    console.log(myColArray);
-  }
-
-  async updateClasses() {
-    console.log("UPDATING CLASSES")
-    myColArray = [];
-    await this.getMyClasses();
-    this.setState({updated: true, displayArray: myColArray});
   }
 
   render() {
@@ -55,10 +31,11 @@ class MyClasses extends React.Component{
           <Container style={{maxWidth: "900px"}}>
           <div id='classAreaParent'>
             <div className="classArea">
-            <Row xs={1} md={1} className="g-4">
-              {this.state.displayArray}
-            </Row>
-            <button onClick={() => this.updateClasses()}>GET CLASSES</button>
+              <div className='scrollLonger'>
+              <Row xs={1} md={1} className="g-4">
+                {this.props.arrayToDisplay}
+              </Row>
+              </div>
             </div>
           </div>
           </Container>
@@ -73,20 +50,5 @@ class MyClasses extends React.Component{
   }
 
 };
-  
-
-function ClassCard(props) {
-  return (<Card style={{
-            textAlign: "left"
-            }}
-            id='DCard'
-            onClick={() => props.passClass()}>
-            <Card.Header>{props.college}</Card.Header>
-            <Card.Body>
-              <Card.Title>{props.classCode}</Card.Title>
-            </Card.Body>
-            <Card.Footer className="text-muted">5 Unread Messages</Card.Footer>
-          </Card>);
-}
 
 export default MyClasses;

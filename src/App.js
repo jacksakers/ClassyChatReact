@@ -9,10 +9,27 @@ import Nav from 'react-bootstrap/Nav'
 import React from 'react';
 import ClassPage from './components/classpage';
 import LogIn from './components/login';
+import Col from 'react-bootstrap/esm/Col';
+import Card from 'react-bootstrap/Card'
 import { db, auth, logout } from './firebase';
 import { doc, getDoc } from "firebase/firestore";
 import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
+let myColArray = [];
+
+function ClassCard(props) {
+  return (<Card style={{
+            textAlign: "left"
+            }}
+            id='DCard'
+            onClick={() => props.passClass()}>
+            <Card.Header>{props.college}</Card.Header>
+            <Card.Body>
+              <Card.Title>{props.classCode}</Card.Title>
+            </Card.Body>
+            <Card.Footer className="text-muted">5 Unread Messages</Card.Footer>
+          </Card>);
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -23,6 +40,7 @@ class App extends React.Component {
       username: "GUEST",
     }
     this.chosenClass = "NULL";
+    this.displayArray = [];
     this.chosenSchool = "NULL";
   }
 
@@ -32,6 +50,32 @@ class App extends React.Component {
     if (docSnap.exists()) {
       this.setState({username: docSnap.data().name, isLoggedIn: true})
       console.log("CURRENT USERNAME: " + docSnap.data().name)
+    }
+  }
+
+  async getMyClasses() {
+    if (auth.currentUser != null) {
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      let _MyClasses = userSnap.data().MyClasses;
+      if (userSnap.exists() && myColArray.length === 0) {
+        for (let i in _MyClasses) {
+          let splitArray = _MyClasses[i].split(" @ ");
+          let justClass = splitArray[0];
+          let justSchool = splitArray[1];
+          myColArray.push(<Col>
+                            <ClassCard 
+                              college= {justSchool}
+                              classCode= {justClass}
+                              passClass= {() => {this.setState({currentPage: "ClassPage"});
+                                                this.chosenClass = justClass;
+                                                this.chosenSchool = justSchool;}}/>
+                          </Col>)
+        }
+      }
+      console.log(myColArray);
+      this.displayArray = [];
+      this.displayArray = myColArray;
     }
   }
 
@@ -57,10 +101,11 @@ class App extends React.Component {
                                         this.chosenSchool = value.school;}} />;
       case "MyClasses":
         return <MyClasses 
-                  passClass={(value) => {this.chosenClass = value.class;
-                                        this.chosenSchool = value.school;
-                                        this.setState({ currentPage: "ClassPage" });}}
-                  goToLogIn={() => this.setState({currentPage: "LogIn"})}/>;
+                  // passClass={(value) => {this.chosenClass = value.class;
+                  //                       this.chosenSchool = value.school;
+                  //                       this.setState({ currentPage: "ClassPage" });}}
+                  goToLogIn={() => this.setState({currentPage: "LogIn"})}
+                  arrayToDisplay={this.displayArray}/>;
       case "ClassPage":
         return <ClassPage currentClass={{school: this.chosenSchool, class: this.chosenClass}} />;
       case "LogIn":
@@ -88,7 +133,8 @@ class App extends React.Component {
           <Navbar.Brand onClick={() => this.setState({currentPage: "Search"})}>ClassyChat</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link onClick={() => this.setState({currentPage: "Search"})}>Search</Nav.Link>
-            <Nav.Link onClick={() => {this.setState({currentPage: "MyClasses"})}}>My Classes</Nav.Link>
+            <Nav.Link onClick={() => {this.setState({currentPage: "MyClasses"});
+                                      this.getMyClasses();}}>My Classes</Nav.Link>
           </Nav>
           <Navbar.Text>
               Welcome, <span
