@@ -55,6 +55,7 @@ class App extends React.Component {
 
   async getMyClasses() {
     if (auth.currentUser != null) {
+      myColArray = [];
       const userRef = doc(db, "users", auth.currentUser.uid);
       const userSnap = await getDoc(userRef);
       let _MyClasses = userSnap.data().MyClasses;
@@ -74,7 +75,6 @@ class App extends React.Component {
         }
       }
       console.log(myColArray);
-      this.displayArray = [];
       this.displayArray = myColArray;
     }
   }
@@ -107,7 +107,8 @@ class App extends React.Component {
                   goToLogIn={() => this.setState({currentPage: "LogIn"})}
                   arrayToDisplay={this.displayArray}/>;
       case "ClassPage":
-        return <ClassPage currentClass={{school: this.chosenSchool, class: this.chosenClass}} />;
+        return <ClassPage currentClass={{school: this.chosenSchool, class: this.chosenClass}} 
+                          username={this.state.username}/>;
       case "LogIn":
         if (!auth.currentUser) {
           return <LogIn didLogIn={(uName) => this.handleLogIn(uName)}/>;

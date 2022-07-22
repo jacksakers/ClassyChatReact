@@ -10,6 +10,9 @@ import { Button } from 'bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/esm/Container';
+import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from '../firebase';
+
 
 class Discussions extends Component {
   constructor(props) {
@@ -17,7 +20,9 @@ class Discussions extends Component {
     this.state = {
       content: "Cards",
       question: "",
-      description: ""
+      description: "",
+      qCards: [],
+      qExpanded: {}
     }
   }
 
@@ -29,11 +34,53 @@ class Discussions extends Component {
     this.setState({description: e.target.value});
   }
 
+  async getAnswers(docID) {
+    const qRef = doc(db, "discussions", this.props.classCode, "questions", docID);
+    const qSnap = await getDoc(qRef);
+    console.log("Getting expanded questions");
+    let qdescription = qSnap.data().description;
+    let qposter = qSnap.data().poster;
+    let qtitle = qSnap.data().title;
+    let qObj = {title: qtitle,
+                poster: qposter,
+                description: qdescription}
+    this.setState({qExpanded: qObj});
+  }
+
+  async postDiscussion(qObj) {
+    const docRef = await addDoc(collection(db, "discussions", this.props.classCode, "questions"), 
+    qObj);
+    await updateDoc(doc(db, "discussions", this.props.classCode), {
+      qNames: arrayUnion(qObj.title + " #-# " + docRef.id)
+    });
+  }
+
+  componentDidMount() {
+    this.getQNames();
+  }
+
+  getQNames() {
+    let qArray = [];
+    for (let i in this.props.qNames) {
+      qArray.push(<Col>
+            <DiscussionCard 
+            college="University of South Carolina" 
+            question={this.props.qNames[i].split(" #-# ")[0]}
+            didClick={() => {this.setState({content: "Card"});
+                              this.getAnswers(this.props.qNames[i].split(" #-# ")[1]);}}/>
+          </Col>);
+    }
+    this.setState({qCards: qArray});
+  }
+
   onSubmit(e) {
     e.preventDefault();
     console.log(this.state.question + ": " + this.state.description);
-    this.setState({text: ""});
-    //this.props.onSendMessage(this.state.text);
+    let qObj = {title: this.state.question,
+      poster: this.props.username,
+      description: this.state.description};
+    this.postDiscussion(qObj);
+    this.setState({content: "Cards", question: "", description: ""});
   }
 
   renderContent() {
@@ -53,14 +100,7 @@ class Discussions extends Component {
             </Row>
             <div className='scrollDis'>
               <Row xs={1} md={1} className="g-4">
-                {Array.from({ length: 10 }).map((_, idx) => (
-                  <Col>
-                    <DiscussionCard 
-                        college="University of South Carolina" 
-                        question="How do you calculate the integral of a function?" 
-                        didClick={() => {this.setState({content: "Card"})}}/>
-                  </Col>
-                ))}
+                {this.state.qCards}
               </Row>
             </div>
           </>;
@@ -72,8 +112,9 @@ class Discussions extends Component {
               className="login-btn"
               >Back</button>
             <DiscussionCardExpanded 
-              college="University of South Carolina" 
-              question="How do you calculate the integral of a function?" 
+              question={this.state.qExpanded.title}
+              poster={this.state.qExpanded.poster}
+              description={this.state.qExpanded.description} 
               />
           </>;
       case "Create":
@@ -150,10 +191,11 @@ function DiscussionCardExpanded(props) {
           <Card style={{
             textAlign: "left"
             }}>
+            <Card.Header style={{textAlign: "right", fontSize: "15px"}}>{props.poster}</Card.Header>
             <Card.Body>
                 <Card.Title>{props.question}</Card.Title>
                 <Card.Text>
-                  This is a description of the question.
+                  {props.description}
                 </Card.Text>
                 
             </Card.Body>

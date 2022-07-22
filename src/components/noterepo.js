@@ -113,8 +113,7 @@ class NotesRepo extends Component {
     )
   };
 }
-          
-        
+
 function NotesCard(props) {
   return (<Card style={{
           textAlign: "left",

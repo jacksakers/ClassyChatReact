@@ -70,7 +70,7 @@
 
 .disArea {
   background-color: lightslategray;
-  height: 70vh;
+  height: 68vh;
   border: 2px solid #000;
   padding: 7px;
   border-radius: 15px;
@@ -181,10 +181,14 @@ div.scrollLonger {
 }
 
 div.scrollDis {
-  max-height: 60vh;
+  max-height: 58vh;
   overflow-x: hidden;
   overflow-y: auto;
   text-align: center;
   padding: 5px;
   display: flex;
+}
+
+#addToClass:hover {
+  background-color: #003f3f !important;
 }
