@@ -69,7 +69,6 @@ class ClassPage extends React.Component {
     if (auth.currentUser != null)
       this.checkIfInMyClasses();
       this.gotDiscussions = await this.getDiscussions();
-      this.gotQIDs = await this.getQIDs();
       console.log("THIS.GOT DISCUSSIONS: " + this.gotDiscussions);
   }
 

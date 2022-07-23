@@ -10,7 +10,7 @@ import { Button } from 'bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/esm/Container';
-import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
 
 
@@ -22,7 +22,8 @@ class Discussions extends Component {
       question: "",
       description: "",
       qCards: [],
-      qExpanded: {}
+      qExpanded: {},
+      disCommentArray: [],
     }
   }
 
@@ -43,8 +44,25 @@ class Discussions extends Component {
     let qtitle = qSnap.data().title;
     let qObj = {title: qtitle,
                 poster: qposter,
-                description: qdescription}
-    this.setState({qExpanded: qObj});
+                description: qdescription,
+                docID: docID};
+    let aArray = qSnap.data().aArray;
+    let _disCommentArray = [];
+    if (aArray !== undefined) {
+      aArray.sort((a, b) => {
+                    console.log(a.split(" #-# ")[2] + " and " + b.split(" #-# ")[2]);
+                    return b.split(" #-# ")[2] - a.split(" #-# ")[2];})
+      console.log(aArray);
+      for (let i in aArray) {
+          _disCommentArray.push(
+            <DisComment answer={ aArray[i].split(" #-# ")[0]}
+              poster= {aArray[i].split(" #-# ")[1]}
+              score= {aArray[i].split(" #-# ")[2]}/>
+          )
+      }
+    }
+    console.log(_disCommentArray);
+    this.setState({qExpanded: qObj, disCommentArray: _disCommentArray});
   }
 
   async postDiscussion(qObj) {
@@ -53,6 +71,7 @@ class Discussions extends Component {
     await updateDoc(doc(db, "discussions", this.props.classCode), {
       qNames: arrayUnion(qObj.title + " #-# " + docRef.id)
     });
+    this.getQNames();
   }
 
   componentDidMount() {
@@ -107,7 +126,8 @@ class Discussions extends Component {
       case "Card":
         return <>
             <button 
-              onClick={() => this.setState({content: "Cards"})}
+              onClick={() => {this.setState({content: "Cards"});
+                              this.getQNames();}}
               style={{float: "left", marginRight: "5px"}}
               className="login-btn"
               >Back</button>
@@ -115,6 +135,11 @@ class Discussions extends Component {
               question={this.state.qExpanded.title}
               poster={this.state.qExpanded.poster}
               description={this.state.qExpanded.description} 
+              disCommentArray= {this.state.disCommentArray}
+              username={this.props.username}
+              classCode={this.props.classCode}
+              docID={this.state.qExpanded.docID}
+              updateAnswers={() => this.getAnswers(this.state.qExpanded.docID)}
               />
           </>;
       case "Create":
@@ -186,6 +211,14 @@ function DiscussionCard(props) {
         );
 }
 
+async function postAnswer(value, username, classCode, docID) {
+  console.log("posting answer..." + value)
+  const qRef = doc(db, "discussions", classCode, "questions", docID);
+  await updateDoc(qRef, {
+      aArray: arrayUnion(value + " #-# " + username + " #-# 0")
+  });
+}
+
 function DiscussionCardExpanded(props) {
   return (<>
           <Card style={{
@@ -200,18 +233,34 @@ function DiscussionCardExpanded(props) {
                 
             </Card.Body>
             <Card.Footer >
+            <div className='scrollDisComment'>
+              {props.disCommentArray}
+            </div>
               <div style={{textAlign: "right"}}>
-                <button id='vote'>^</button>
-                <button id='vote'>v</button>
-                One comment
-              </div>
-              <div style={{textAlign: "right"}}>
-                <Input text="Post" />
+                <Input 
+                  text="Post" 
+                  onSendMessage={async (value) => {await postAnswer(value, props.username, props.classCode, props.docID);
+                                              props.updateAnswers();}}/>
               </div>
             </Card.Footer>
           </Card>
           </>
         );
+}
+
+function DisComment(props) {
+  return (<div style={{border: "1px solid gray", 
+                        padding: "5px", 
+                        borderRadius: "5%",
+                        margin: "5px"}}>
+    <button id='vote'>^</button>
+     {props.score}
+    <button id='vote'>v</button>
+    <div style={{textAlign: "right", marginBottom: "8px"}}>
+      {props.answer} - {props.poster}
+    </div>
+    </div>
+  );
 }
 
 export default Discussions;

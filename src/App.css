@@ -78,7 +78,8 @@
 }
 
 #vote {
-  margin-right: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 
 #vote:hover {
@@ -187,6 +188,13 @@ div.scrollDis {
   text-align: center;
   padding: 5px;
   display: flex;
+}
+
+div.scrollDisComment {
+  max-height: 35vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 5px;
 }
 
 #addToClass:hover {
