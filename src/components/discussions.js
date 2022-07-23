@@ -65,13 +65,31 @@ class Discussions extends Component {
     this.setState({qExpanded: qObj, disCommentArray: _disCommentArray});
   }
 
+  async updateDiscussions() {
+    const disRef = doc(db, "discussions", this.props.classCode);
+    const disSnap = await getDoc(disRef);
+    console.log("Getting Discussions");
+    let qNames = disSnap.data().qNames;
+    let qArray = [];
+    for (let i in qNames) {
+      qArray.push(<Col>
+            <DiscussionCard 
+            college="University of South Carolina" 
+            question={qNames[i].split(" #-# ")[0]}
+            didClick={() => {this.setState({content: "Card"});
+                              this.getAnswers(qNames[i].split(" #-# ")[1]);}}/>
+          </Col>);
+    }
+    this.setState({qCards: qArray});
+  }
+
   async postDiscussion(qObj) {
     const docRef = await addDoc(collection(db, "discussions", this.props.classCode, "questions"), 
     qObj);
     await updateDoc(doc(db, "discussions", this.props.classCode), {
       qNames: arrayUnion(qObj.title + " #-# " + docRef.id)
     });
-    this.getQNames();
+    this.updateDiscussions();
   }
 
   componentDidMount() {
@@ -90,6 +108,7 @@ class Discussions extends Component {
           </Col>);
     }
     this.setState({qCards: qArray});
+    return qArray;
   }
 
   onSubmit(e) {
@@ -99,7 +118,8 @@ class Discussions extends Component {
       poster: this.props.username,
       description: this.state.description};
     this.postDiscussion(qObj);
-    this.setState({content: "Cards", question: "", description: ""});
+    let newQs = this.getQNames();
+    this.setState({content: "Cards", question: "", description: "", qCards: newQs});
   }
 
   renderContent() {
@@ -126,8 +146,8 @@ class Discussions extends Component {
       case "Card":
         return <>
             <button 
-              onClick={() => {this.setState({content: "Cards"});
-                              this.getQNames();}}
+              onClick={() => {this.updateDiscussions();
+                              this.setState({content: "Cards"});}}
               style={{float: "left", marginRight: "5px"}}
               className="login-btn"
               >Back</button>
