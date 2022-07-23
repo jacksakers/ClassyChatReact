@@ -24,6 +24,7 @@ class ClassPage extends React.Component {
       classCode: (this.props.currentClass.class + " @ " + this.props.currentClass.school)
     }
     this.gotDiscussions = [];
+    this.gotNotes = [];
     this.gotQIDs = [];
   }
 
@@ -32,8 +33,15 @@ class ClassPage extends React.Component {
     const disSnap = await getDoc(disRef);
     console.log("Getting Discussions");
     let qArray = disSnap.data().qNames;
-    console.log(qArray);
     return qArray;
+  }
+
+  async getNotes() {
+    const notRef = doc(db, "notes repo", this.state.classCode);
+    const notSnap = await getDoc(notRef);
+    console.log("Getting Notes..");
+    let nArray = notSnap.data().nNames;
+    return nArray;
   }
 
   renderTab(currentTab) {
@@ -47,14 +55,16 @@ class ClassPage extends React.Component {
                               classCode={this.state.classCode}
                               username={this.props.username}/>;
       case "Notes":
-        return <NotesRepo />;
+        return <NotesRepo nNames={this.gotNotes}
+                          classCode={this.state.classCode}
+                          username={this.props.username}/>;
     }
   }
 
   async checkIfInMyClasses() {
     const userRef = doc(db, "users", auth.currentUser.uid);
     const userSnap = await getDoc(userRef);
-    console.log("READ HAPPENED");
+    console.log("Checked if in myclasses...");
     let _MyClasses = userSnap.data().MyClasses;
     if (userSnap.exists()) {
       for (let i in _MyClasses) {
@@ -69,7 +79,7 @@ class ClassPage extends React.Component {
     if (auth.currentUser != null)
       this.checkIfInMyClasses();
       this.gotDiscussions = await this.getDiscussions();
-      console.log("THIS.GOT DISCUSSIONS: " + this.gotDiscussions);
+      this.gotNotes = await this.getNotes();
   }
 
   async changeMyClass() {

@@ -8,7 +8,7 @@ import CreatableSelect from 'react-select/creatable';
 import { ActionMeta, OnChangeValue } from 'react-select';
 import App from "../App";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
 const collegeRef = collection(db, "colleges");
@@ -72,6 +72,10 @@ class SearchArea extends React.Component {
       await setDoc(doc(db, "classes", classCode), 
                   {school: this.state.chosenCollege,
                   className: _class.label});
+      await setDoc(doc(db, "discussions", classCode), 
+                  {creator: auth.currentUser.uid});
+      await setDoc(doc(db, "notes repo", classCode), 
+                  {creator: auth.currentUser.uid});
       this.props.passClass({school: this.state.chosenCollege, class: _class.label});
       this.setState({chosenClass: _class.label, buttonDisabled: false});
     } else {

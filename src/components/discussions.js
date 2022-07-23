@@ -10,7 +10,7 @@ import { Button } from 'bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/esm/Container';
-import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, setDoc, arrayRemove } from "firebase/firestore";
 import { db } from '../firebase';
 
 
@@ -24,6 +24,7 @@ class Discussions extends Component {
       qCards: [],
       qExpanded: {},
       disCommentArray: [],
+      voted: false
     }
   }
 
@@ -35,10 +36,26 @@ class Discussions extends Component {
     this.setState({description: e.target.value});
   }
 
+  async changeScore(value, oldAnswer, qRef) {
+    if (!this.state.voted) {
+      let oldScore = parseInt(oldAnswer.split(" #-# ")[2]);
+      let newScore = oldScore + value;
+      let newAnswer = (oldAnswer.split(" #-# ")[0] + " #-# " +
+                        oldAnswer.split(" #-# ")[1] + " #-# " + newScore)
+      await updateDoc(qRef, {
+          aArray: arrayRemove(oldAnswer),
+      });
+      await updateDoc(qRef, {
+        aArray: arrayUnion(newAnswer),
+      });
+      this.setState({voted: true})
+    }
+  }
+
   async getAnswers(docID) {
     const qRef = doc(db, "discussions", this.props.classCode, "questions", docID);
     const qSnap = await getDoc(qRef);
-    console.log("Getting expanded questions");
+    console.log("Getting expanded questions...");
     let qdescription = qSnap.data().description;
     let qposter = qSnap.data().poster;
     let qtitle = qSnap.data().title;
@@ -49,26 +66,28 @@ class Discussions extends Component {
     let aArray = qSnap.data().aArray;
     let _disCommentArray = [];
     if (aArray !== undefined) {
-      aArray.sort((a, b) => {
-                    console.log(a.split(" #-# ")[2] + " and " + b.split(" #-# ")[2]);
-                    return b.split(" #-# ")[2] - a.split(" #-# ")[2];})
-      console.log(aArray);
+      aArray.sort((a, b) => {return b.split(" #-# ")[2] - a.split(" #-# ")[2];})
       for (let i in aArray) {
           _disCommentArray.push(
             <DisComment answer={ aArray[i].split(" #-# ")[0]}
               poster= {aArray[i].split(" #-# ")[1]}
-              score= {aArray[i].split(" #-# ")[2]}/>
+              score= {aArray[i].split(" #-# ")[2]}
+              upvote={async () => {await this.changeScore(1, aArray[i], qRef);
+                                    if (!this.state.voted)
+                                      this.getAnswers(docID);}}
+              downvote={async () => {await this.changeScore(-1, aArray[i], qRef);
+                                      if (!this.state.voted)
+                                        this.getAnswers(docID)}}/>
           )
       }
     }
-    console.log(_disCommentArray);
     this.setState({qExpanded: qObj, disCommentArray: _disCommentArray});
   }
 
   async updateDiscussions() {
     const disRef = doc(db, "discussions", this.props.classCode);
     const disSnap = await getDoc(disRef);
-    console.log("Getting Discussions");
+    console.log("Getting Discussions...");
     let qNames = disSnap.data().qNames;
     let qArray = [];
     for (let i in qNames) {
@@ -113,13 +132,14 @@ class Discussions extends Component {
 
   onSubmit(e) {
     e.preventDefault();
-    console.log(this.state.question + ": " + this.state.description);
     let qObj = {title: this.state.question,
       poster: this.props.username,
       description: this.state.description};
-    this.postDiscussion(qObj);
-    let newQs = this.getQNames();
-    this.setState({content: "Cards", question: "", description: "", qCards: newQs});
+    if (qObj.title !== "") {
+      this.postDiscussion(qObj);
+      let newQs = this.getQNames();
+      this.setState({content: "Cards", question: "", description: "", qCards: newQs});
+    }
   }
 
   renderContent() {
@@ -147,7 +167,7 @@ class Discussions extends Component {
         return <>
             <button 
               onClick={() => {this.updateDiscussions();
-                              this.setState({content: "Cards"});}}
+                              this.setState({content: "Cards", voted: false, qExpanded: {}});}}
               style={{float: "left", marginRight: "5px"}}
               className="login-btn"
               >Back</button>
@@ -193,7 +213,7 @@ class Discussions extends Component {
                 <button 
                   id="send-btn"
                   style={{ marginTop: "10px" }}
-                  onClick={() => {console.log("POST THAT!")}}
+                  onClick={() => {console.log("Posting Discussion...")}}
                   >Post</button>
               </Form>
           </>;
@@ -232,7 +252,6 @@ function DiscussionCard(props) {
 }
 
 async function postAnswer(value, username, classCode, docID) {
-  console.log("posting answer..." + value)
   const qRef = doc(db, "discussions", classCode, "questions", docID);
   await updateDoc(qRef, {
       aArray: arrayUnion(value + " #-# " + username + " #-# 0")
@@ -273,9 +292,9 @@ function DisComment(props) {
                         padding: "5px", 
                         borderRadius: "5%",
                         margin: "5px"}}>
-    <button id='vote'>^</button>
+    <button id='vote' onClick={() => props.upvote()}>^</button>
      {props.score}
-    <button id='vote'>v</button>
+    <button id='vote' onClick={() => props.downvote()}>v</button>
     <div style={{textAlign: "right", marginBottom: "8px"}}>
       {props.answer} - {props.poster}
     </div>
