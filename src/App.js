@@ -18,6 +18,12 @@ import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 let myColArray = [];
 
 function ClassCard(props) {
+  let plural = "";
+  if (props.numOfStudents == 1) {
+    plural = "Student";
+  } else {
+    plural = "Students";
+  }
   return (<Card style={{
             textAlign: "left"
             }}
@@ -27,7 +33,7 @@ function ClassCard(props) {
             <Card.Body>
               <Card.Title>{props.classCode}</Card.Title>
             </Card.Body>
-            <Card.Footer className="text-muted">5 Unread Messages</Card.Footer>
+            <Card.Footer className="text-muted">{props.numOfStudents} {plural}</Card.Footer>
           </Card>);
 }
 
@@ -49,7 +55,6 @@ class App extends React.Component {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       this.setState({username: docSnap.data().name, isLoggedIn: true})
-      console.log("CURRENT USERNAME: " + docSnap.data().name)
     }
   }
 
@@ -64,17 +69,21 @@ class App extends React.Component {
           let splitArray = _MyClasses[i].split(" @ ");
           let justClass = splitArray[0];
           let justSchool = splitArray[1];
+          const classRef = doc(db, "classes", _MyClasses[i]);
+          const classSnap = await getDoc(classRef);
+          console.log("Got Number of Students in " + _MyClasses[i])
+          let numStudents = classSnap.data().numOfStudents;
           myColArray.push(<Col>
                             <ClassCard 
                               college= {justSchool}
                               classCode= {justClass}
                               passClass= {() => {this.setState({currentPage: "ClassPage"});
                                                 this.chosenClass = justClass;
-                                                this.chosenSchool = justSchool;}}/>
+                                                this.chosenSchool = justSchool;}}
+                              numOfStudents= {numStudents}/>
                           </Col>)
         }
       }
-      console.log(myColArray);
       this.displayArray = myColArray;
     }
   }
@@ -85,7 +94,6 @@ class App extends React.Component {
         this.getUserName();
       }
     }
-    console.log("UPDATED")
   }
 
   handleLogIn(uName) {

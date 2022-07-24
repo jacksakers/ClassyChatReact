@@ -2,11 +2,17 @@ import {Component} from "react";
 import Button from 'react-bootstrap/Button'
 import React from "react";
 import '../App.css';
+import { auth } from "../firebase";
 
 
 class Input extends Component {
   constructor(props) {
     super(props);
+    if (auth.currentUser !== null) {
+      this.btnDisabled = false;
+    } else {
+      this.btnDisabled = true;
+    }
   }
 
   state = {
@@ -36,7 +42,7 @@ class Input extends Component {
             autofocus="true"
             style={{margin: "10px"}}
           />
-          <button id="send-btn">{this.props.text}</button>
+          <button id="send-btn" disabled={this.btnDisabled}>{this.props.text}</button>
         </form>
       </div>
     );

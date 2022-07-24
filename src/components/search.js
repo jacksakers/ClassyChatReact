@@ -71,7 +71,8 @@ class SearchArea extends React.Component {
       let classCode = (_class.label + " @ " + this.state.chosenCollege)
       await setDoc(doc(db, "classes", classCode), 
                   {school: this.state.chosenCollege,
-                  className: _class.label});
+                  className: _class.label,
+                  numOfStudents: 0});
       await setDoc(doc(db, "discussions", classCode), 
                   {creator: auth.currentUser.uid});
       await setDoc(doc(db, "notes repo", classCode), 

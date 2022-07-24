@@ -8,7 +8,7 @@ import NotesRepo from './noterepo';
 import Col from 'react-bootstrap/esm/Col';
 import Card from 'react-bootstrap/Card'
 import Container from 'react-bootstrap/esm/Container';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, FieldValue, increment, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, setDoc, arrayUnion, arrayRemove, updateDoc, onSnapshot } from "firebase/firestore";
 
@@ -26,6 +26,7 @@ class ClassPage extends React.Component {
     this.gotDiscussions = [];
     this.gotNotes = [];
     this.gotQIDs = [];
+    this.btnDisabled = true;
   }
 
   async getDiscussions() {
@@ -76,23 +77,46 @@ class ClassPage extends React.Component {
     }
   }
 
+  first = false;
+
   async componentDidMount() {
-    if (auth.currentUser != null)
+    if (auth.currentUser != null) {
       this.checkIfInMyClasses();
+      this.btnDisabled = false;
+    }
+    if (!this.first) {
+      this.first = true;
       this.gotDiscussions = await this.getDiscussions();
-      this.gotNotes = await this.getNotes();
+      this.gotNotes = await this.getNotes();}
   }
 
   async changeMyClass() {
     const userRef = doc(db, "users", auth.currentUser.uid);
+    const classRef = doc(db, "classes", this.state.classCode);
     if (this.state.inMyClass) {
       await updateDoc(userRef, {
           MyClasses: arrayRemove(this.state.classCode)
+      });
+      const classSnap = await getDoc(classRef);
+      let oldNum = 0;
+      if (classSnap.exists()) {
+        oldNum = classSnap.data().numOfStudents;
+      }
+      await updateDoc(classRef, {
+        numOfStudents: (oldNum - 1)
       });
       this.setState({inMyClass: false, addBtn: "Add"});
     } else {
       await updateDoc(userRef, {
         MyClasses: arrayUnion(this.state.classCode)
+      });
+      const classSnap = await getDoc(classRef);
+      let oldNum = 0;
+      if (classSnap.exists()) {
+        oldNum = classSnap.data().numOfStudents;
+      }
+      await updateDoc(classRef, {
+        numOfStudents: (oldNum + 1)
       });
       this.setState({inMyClass: true, addBtn: "Remove"});
     }
@@ -105,7 +129,8 @@ class ClassPage extends React.Component {
       <Button 
         style={{float: "right",marginRight: "10px",backgroundColor: "#006666"}} 
         onClick={() => this.changeMyClass()}
-        id='addToClass'>
+        id='addToClass'
+        disabled={this.btnDisabled}>
         {this.state.addBtn}
       </Button>
       <h1>{this.state.currentClass}</h1>  

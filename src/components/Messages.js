@@ -1,5 +1,12 @@
 import {Component} from "react";
 import React from "react";
+import { useEffect, useRef } from "react";
+
+const AlwaysScrollToBottom = () => {
+  const elementRef = useRef();
+  useEffect(() => elementRef.current.scrollIntoView());
+  return <div ref={elementRef} />;
+};
 
 class Messages extends Component {
   render() {
@@ -7,9 +14,7 @@ class Messages extends Component {
     return (
       <ul className="Messages-list">
         {messages.map(m => this.renderMessage(m))}
-        <div style={{ float:"left", clear: "both" }}
-                ref={(el) => { this.props.messagesEnd(el); }}>
-        </div>
+        <AlwaysScrollToBottom />
       </ul>
     );
   }

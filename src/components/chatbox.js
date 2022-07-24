@@ -27,18 +27,9 @@ class ChatBox extends Component {
 
     messages = [];
     messagesEnd = null;
-
-    scrollToBottom = () => {
-      this.messagesEnd.scrollIntoView();
-    }
     
     componentDidMount() {
       this.getChats();
-      this.scrollToBottom();
-    }
-
-    setMessageEnd(element) {
-      this.messagesEnd = element;
     }
 
     getChats() {
@@ -81,11 +72,7 @@ class ChatBox extends Component {
               <Messages
                 messages={this.state.messages}
                 currentMember={this.state.member}
-                messagesEnd={(element) => this.setMessageEnd(element)}
               />
-              <div style={{ float:"left", clear: "both" }}
-                ref={(el) => { this.setMessageEnd(el); }}>
-              </div>
             </div>
           </Row>
           <Row>

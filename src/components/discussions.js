@@ -11,7 +11,7 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/esm/Container';
 import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, setDoc, arrayRemove } from "firebase/firestore";
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 
 
 class Discussions extends Component {
@@ -26,6 +26,7 @@ class Discussions extends Component {
       disCommentArray: [],
       voted: false
     }
+    this.btnDisabled = true;
   }
 
   onQChange(e) {
@@ -113,6 +114,9 @@ class Discussions extends Component {
 
   componentDidMount() {
     this.getQNames();
+    if (auth.currentUser !== null) {
+      this.btnDisabled = false;
+    }
   }
 
   getQNames() {
@@ -155,6 +159,7 @@ class Discussions extends Component {
                     }}
                     onClick={() => {this.setState({content: "Create"})}}
                     className="login-btn"
+                    disabled={this.btnDisabled}
                     >Create Discussion</button>
             </Row>
             <div className='scrollDis'>
@@ -214,6 +219,7 @@ class Discussions extends Component {
                   id="send-btn"
                   style={{ marginTop: "10px" }}
                   onClick={() => {console.log("Posting Discussion...")}}
+                  disabled={this.btnDisabled}
                   >Post</button>
               </Form>
           </>;
@@ -237,7 +243,8 @@ class Discussions extends Component {
 function DiscussionCard(props) {
   return (<Card style={{
           textAlign: "left",
-          marginBottom: "-5px"
+          marginBottom: "-5px",
+          minWidth: "350px"
           }}
           onClick={() => {
             props.didClick();

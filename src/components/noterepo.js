@@ -8,7 +8,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, setDoc, arrayRemove } from "firebase/firestore";
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 class NotesRepo extends Component {
@@ -21,6 +21,7 @@ class NotesRepo extends Component {
       nExpanded: {},
       uploadNote: ""
     }
+    this.btnDisabled = true;
   }
 
   onChange(e) {
@@ -43,6 +44,9 @@ class NotesRepo extends Component {
 
   componentDidMount() {
     this.getNNames();
+    if (auth.currentUser !== null) {
+      this.btnDisabled = false;
+    }
   }
 
   getNNames() {
@@ -128,6 +132,7 @@ class NotesRepo extends Component {
               }}
               onClick={() => this.setState({content: "Create"})}
               className="login-btn"
+              disabled={this.btnDisabled}
               >Upload Notes</button>
           </Row>
           <div className='scrollDis'>
@@ -203,7 +208,8 @@ class NotesRepo extends Component {
 function NotesCard(props) {
   return (<Card style={{
           textAlign: "left",
-          marginBottom: "-5px"
+          marginBottom: "-5px",
+          minWidth: "350px"
           }}
           onClick={() => props.didClick()}
           id='DCard'>
