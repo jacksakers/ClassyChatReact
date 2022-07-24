@@ -213,4 +213,8 @@ div.scrollNotes {
   #navlink {
     font-size: 12px !important;
   }
+
+  #DCard {
+    min-width: 100px !important;
+  }
 }

@@ -30,12 +30,10 @@ class SearchArea extends React.Component {
 
   async getCollege() {
     const querySnapshot = await getDocs(collegeQ);
-    console.log(this.state.collegeList);
     this.state.collegeList = [];
     let newList = [];
     querySnapshot.forEach((doc) => {
       newList.push({label: doc.id});
-      console.log(doc.id);
     });
     this.setState({collegeList: newList})
   }
@@ -47,7 +45,6 @@ class SearchArea extends React.Component {
     querySnapshot.forEach((doc) => {
       let justClass = doc.id.split(" @");
       this.state.classList.push({label: justClass[0]});
-      console.log("CLASSES:" + doc.id);
     });
   }
 
@@ -64,6 +61,10 @@ class SearchArea extends React.Component {
     if (this.state.chosenClass !== "NULL") {
       this.setState({chosenClass: "NULL", buttonDisabled: true})
     }
+  }
+
+  componentDidMount() {
+    // React.initializeTouchEvents(true);
   }
 
   async handleClassChoose(_class) {
@@ -94,7 +95,7 @@ class SearchArea extends React.Component {
                 <h2>Choose Your School:</h2>
               </Row>
               <Row>
-                <div onClick={() => this.getCollege()}>
+                <div onClick={() => this.getCollege()} onTouchStart={() => this.getCollege()}>
                 <CreatableSelect
                   options={this.state.collegeList}
                   onChange={opt => this.handleCollegeChoose(opt)}
