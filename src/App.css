@@ -197,6 +197,20 @@ div.scrollDisComment {
   padding: 5px;
 }
 
+div.scrollNotes {
+  max-height: 51vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+
 #addToClass:hover {
   background-color: #003f3f !important;
+}
+
+@media screen and (max-width: 411px) {
+  #navlink {
+    font-size: 12px !important;
+  }
 }

@@ -19,7 +19,7 @@ let myColArray = [];
 
 function ClassCard(props) {
   let plural = "";
-  if (props.numOfStudents == 1) {
+  if (props.numOfStudents === 1) {
     plural = "Student";
   } else {
     plural = "Students";
@@ -141,11 +141,11 @@ class App extends React.Component {
           <Container>
           <Navbar.Brand onClick={() => this.setState({currentPage: "Search"})}>ClassyChat</Navbar.Brand>
           <Nav className="me-auto">
-            <Nav.Link onClick={() => this.setState({currentPage: "Search"})}>Search</Nav.Link>
-            <Nav.Link onClick={() => {this.setState({currentPage: "MyClasses"});
+            <Nav.Link id="navlink" onClick={() => this.setState({currentPage: "Search"})}>Search</Nav.Link>
+            <Nav.Link id="navlink" onClick={() => {this.setState({currentPage: "MyClasses"});
                                       this.getMyClasses();}}>My Classes</Nav.Link>
           </Nav>
-          <Navbar.Text>
+          <Navbar.Text id='navlink'>
               Welcome, <span
                         onClick={() => this.setState({currentPage: "LogIn"})}
                         style={{color: "white"}}

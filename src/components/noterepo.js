@@ -29,14 +29,14 @@ class NotesRepo extends Component {
   }
 
   onFChange(e) {
-    this.setState({uploadNote: e.target.files[0]});
+    this.setState({uploadNote: e.target.files});
   }
 
   onSubmit(e) {
     e.preventDefault();
     let nObj = {title: this.state.title,
       poster: this.props.username,
-      content: "Uploading..."};
+      content: ["Uploading..."]};
     this.postNote(nObj);
     let newNs = this.getNNames();
     this.setState({content: "Cards", title: "", uploadNote: "", nCards: newNs});
@@ -78,25 +78,31 @@ class NotesRepo extends Component {
   }
 
   async postNote(qObj) {
-    let file = this.state.uploadNote;
+    let files = this.state.uploadNote;
     const docRef = await addDoc(collection(db, "notes repo", this.props.classCode, "notes"), 
     qObj);
     const storage = getStorage();
-    console.log('files_new/' + file.name);
-    const storageRef = ref(storage, 'files_new/' + file.name);
-    uploadBytes(storageRef, file).then((snapshot) => {
-      console.log('Uploaded a file!');
-      getDownloadURL(storageRef)
-      .then(async (url) => {
-        await updateDoc(doc(db, "notes repo", this.props.classCode, "notes", docRef.id), {
-          content: url
-        }); 
-        this.updateNotes();
-      })
-      .catch((error) => {
-        // Handle any errors
+    await updateDoc(doc(db, "notes repo", this.props.classCode, "notes", docRef.id), {
+      content: []
+    }); 
+    for (let i in files) {
+      console.log('files_new/' + files[i].name);
+      const storageRef = ref(storage, 'files_new/' + files[i].name);
+      uploadBytes(storageRef, files[i]).then((snapshot) => {
+        console.log('Uploaded a file!');
+        getDownloadURL(storageRef)
+        .then(async (url) => {
+          await updateDoc(doc(db, "notes repo", this.props.classCode, "notes", docRef.id), {
+            content: arrayUnion(url)
+          }); 
+          if (i === 1)
+            this.updateNotes();
+        })
+        .catch((error) => {
+          // Handle any errors
+        });
       });
-    });
+    }
     await updateDoc(doc(db, "notes repo", this.props.classCode), {
       nNames: arrayUnion(qObj.title + " #-# " + docRef.id)
     });
@@ -181,7 +187,8 @@ class NotesRepo extends Component {
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Control 
                 type="file" 
-                onChange={e => this.onFChange(e)}/>
+                onChange={e => this.onFChange(e)}
+                multiple/>
             </Form.Group>
             <button 
               id="send-btn"
@@ -222,18 +229,25 @@ function NotesCard(props) {
 }
 
 function NotesCardExpanded(props) {
+  let showArray = [];
+  for (let i in props.content) {
+    showArray.push(
+      <a href={props.content[i]} target="_blank" rel="noreferrer">
+      <img 
+        src={props.content[i]} 
+        style={{maxHeight: "51.5vh"}}
+        alt=""></img>
+      </a>);
+  }
   return (<Card style={{
           textAlign: "left"
           }}>
           <Card.Header style={{textAlign: "right", fontSize: "15px"}}>{props.poster}</Card.Header>
           <Card.Body>
               <Card.Title>{props.title}</Card.Title>
-              <a href={props.content} target="_blank" rel="noreferrer">
-                <img 
-                  src={props.content} 
-                  alt={props.title}
-                  style={{maxHeight: "51.5vh"}}></img>
-              </a>
+              <div className='scrollNotes'>
+              {showArray}
+              </div>
           </Card.Body>
           </Card>
         );
