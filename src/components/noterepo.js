@@ -36,11 +36,9 @@ class NotesRepo extends Component {
     let nObj = {title: this.state.title,
       poster: this.props.username,
       content: "Uploading..."};
-    if (nObj.title !== "") {
-      this.postNote(nObj);
-      let newNs = this.getNNames();
-      this.setState({content: "Cards", title: "", uploadNote: "", nCards: newNs});
-    }
+    this.postNote(nObj);
+    let newNs = this.getNNames();
+    this.setState({content: "Cards", title: "", uploadNote: "", nCards: newNs});
   }
 
   componentDidMount() {
@@ -80,6 +78,7 @@ class NotesRepo extends Component {
     const docRef = await addDoc(collection(db, "notes repo", this.props.classCode, "notes"), 
     qObj);
     const storage = getStorage();
+    console.log('files_new/' + file.name);
     const storageRef = ref(storage, 'files_new/' + file.name);
     uploadBytes(storageRef, file).then((snapshot) => {
       console.log('Uploaded a file!');

@@ -9,7 +9,7 @@ class Messages extends Component {
         {messages.map(m => this.renderMessage(m))}
         <div style={{ float:"left", clear: "both" }}
                 ref={(el) => { this.props.messagesEnd(el); }}>
-              </div>
+        </div>
       </ul>
     );
   }

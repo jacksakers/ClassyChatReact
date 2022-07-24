@@ -49,7 +49,8 @@ class ClassPage extends React.Component {
     switch(currentTab){
       default:
       case "Chat":
-        return <ChatBox />;
+        return <ChatBox classCode={this.state.classCode}
+                          username={this.props.username}/>;
       case "Discussion":
         return <Discussions qNames={this.gotDiscussions} 
                               classCode={this.state.classCode}
@@ -122,7 +123,8 @@ class ClassPage extends React.Component {
                                           this.getDiscussions();}} eventKey="link-2">Discussions</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link onClick={() => this.setState({ cTab: "Notes" })} eventKey="link-3">Notes Repository</Nav.Link>
+                <Nav.Link onClick={async () => {this.setState({ cTab: "Notes" });
+                                          this.gotNotes = await this.getNotes();}} eventKey="link-3">Notes Repository</Nav.Link>
             </Nav.Item>
         </Nav>
         
