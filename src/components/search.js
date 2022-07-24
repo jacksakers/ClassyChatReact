@@ -3,11 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
-import Select from 'react-select';  
 import CreatableSelect from 'react-select/creatable';
-import { ActionMeta, OnChangeValue } from 'react-select';
 import App from "../App";
-import { doc, getDoc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 

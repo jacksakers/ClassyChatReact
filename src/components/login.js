@@ -1,16 +1,9 @@
 import React, { Component } from 'react';
 import '../App.css';
-import Row from 'react-bootstrap/Row'
 import Card from 'react-bootstrap/Card'
-import Col from 'react-bootstrap/Col'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import { auth, registerWithEmailAndPassword, logInWithEmailAndPassword } from "../firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 class LogIn extends Component {
   constructor(props) {
@@ -93,7 +86,8 @@ class LogIn extends Component {
         >or you can <button 
                       className='login-btn' 
                       onClick={() => this.setState({newUser: true})}
-                      >Sign Up</button></p></>;
+                      onTouchStart={() => this.setState({newUser: true})}
+                      >Sign Up</button></p></>
   }
 
   SignInForm() {
@@ -137,7 +131,8 @@ class LogIn extends Component {
         >or you can <button 
                       className='login-btn' 
                       onClick={() => this.setState({newUser: false})}
-                      >Log In</button></p></>;
+                      onTouchStart={() => this.setState({newUser: false})}
+                      >Log In</button></p></>
   }
 
   renderForm() {

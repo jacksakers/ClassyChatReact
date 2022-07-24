@@ -5,12 +5,10 @@ import Button from 'react-bootstrap/Button'
 import ChatBox from './chatbox'
 import Discussions from './discussions'
 import NotesRepo from './noterepo';
-import Col from 'react-bootstrap/esm/Col';
-import Card from 'react-bootstrap/Card'
 import Container from 'react-bootstrap/esm/Container';
-import { doc, FieldValue, increment, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
-import { collection, query, where, getDocs, setDoc, arrayUnion, arrayRemove, updateDoc, onSnapshot } from "firebase/firestore";
+import { arrayUnion, arrayRemove, updateDoc } from "firebase/firestore";
 
 class ClassPage extends React.Component {
   constructor(props) {

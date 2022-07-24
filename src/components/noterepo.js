@@ -3,11 +3,9 @@ import '../App.css';
 import Row from 'react-bootstrap/Row'
 import Card from 'react-bootstrap/Card'
 import Col from 'react-bootstrap/Col'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, setDoc, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from '../firebase';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 

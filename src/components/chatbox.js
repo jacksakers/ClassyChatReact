@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import '../App.css';
 import Messages from "./Messages";
 import Input from "./Input";
-import Container from 'react-bootstrap/esm/Container';
 import Col from 'react-bootstrap/esm/Col';
 import Row from 'react-bootstrap/esm/Row';
 import { getDatabase, ref, onValue, set, push } from "firebase/database";

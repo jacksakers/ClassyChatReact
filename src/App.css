@@ -211,10 +211,16 @@ div.scrollNotes {
 
 @media screen and (max-width: 411px) {
   #navlink {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
 
   #DCard {
     min-width: 100px !important;
+  }
+}
+
+@media screen and (max-width: 332px) {
+  #navlink {
+    font-size: 10px !important;
   }
 }
