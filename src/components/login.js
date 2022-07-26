@@ -87,6 +87,7 @@ class LogIn extends Component {
                       className='login-btn' 
                       onClick={() => this.setState({newUser: true})}
                       onTouchStart={() => this.setState({newUser: true})}
+                      style={{marginBottom: "20px"}}
                       >Sign Up</button></p></>
   }
 
@@ -132,6 +133,7 @@ class LogIn extends Component {
                       className='login-btn' 
                       onClick={() => this.setState({newUser: false})}
                       onTouchStart={() => this.setState({newUser: false})}
+                      style={{marginBottom: "20px"}}
                       >Log In</button></p></>
   }
 
@@ -148,7 +150,7 @@ class LogIn extends Component {
       <><Container style={{maxWidth: "500px"}}>
           <Card
           style={{padding: "10px", backgroundColor: "#006666"}}>
-            {this.renderForm()};
+            {this.renderForm()}
           </Card>
         </Container>
       </>

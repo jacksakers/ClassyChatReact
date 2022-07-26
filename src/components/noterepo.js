@@ -37,6 +37,7 @@ class NotesRepo extends Component {
       content: ["Uploading..."]};
     this.postNote(nObj);
     let newNs = this.getNNames();
+    newNs = newNs.reverse();
     this.setState({content: "Cards", title: "", uploadNote: "", nCards: newNs});
   }
 
@@ -57,6 +58,7 @@ class NotesRepo extends Component {
                               this.getNote(this.props.nNames[i].split(" #-# ")[1]);}}/>
           </Col>);
     }
+    nArray = nArray.reverse();
     this.setState({nCards: nArray});
     return nArray;
   }
@@ -120,6 +122,7 @@ class NotesRepo extends Component {
                           this.getNote(nNames[i].split(" #-# ")[1]);}}/>
       </Col>);
     }
+    nArray = nArray.reverse();
     this.setState({nCards: nArray});
   }
 

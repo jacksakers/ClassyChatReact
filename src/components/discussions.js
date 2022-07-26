@@ -96,6 +96,7 @@ class Discussions extends Component {
                               this.getAnswers(qNames[i].split(" #-# ")[1]);}}/>
           </Col>);
     }
+    qArray = qArray.reverse();
     this.setState({qCards: qArray});
   }
 
@@ -126,6 +127,7 @@ class Discussions extends Component {
                               this.getAnswers(this.props.qNames[i].split(" #-# ")[1]);}}/>
           </Col>);
     }
+    qArray = qArray.reverse();
     this.setState({qCards: qArray});
     return qArray;
   }

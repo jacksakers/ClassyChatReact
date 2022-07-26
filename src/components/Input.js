@@ -1,5 +1,4 @@
 import {Component} from "react";
-import Button from 'react-bootstrap/Button'
 import React from "react";
 import '../App.css';
 import { auth } from "../firebase";

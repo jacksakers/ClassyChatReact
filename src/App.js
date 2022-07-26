@@ -13,7 +13,6 @@ import Col from 'react-bootstrap/esm/Col';
 import Card from 'react-bootstrap/Card'
 import { db, auth, logout } from './firebase';
 import { doc, getDoc } from "firebase/firestore";
-import { collection, query, where, getDocs, setDoc } from "firebase/firestore";
 
 let myColArray = [];
 
@@ -44,9 +43,9 @@ class App extends React.Component {
       currentPage: "Search",
       isLoggedIn: false,
       username: "GUEST",
+      displayArray: []
     }
     this.chosenClass = "NULL";
-    this.displayArray = [];
     this.chosenSchool = "NULL";
   }
 
@@ -84,7 +83,7 @@ class App extends React.Component {
                           </Col>)
         }
       }
-      this.displayArray = myColArray;
+      this.setState({displayArray: myColArray});
     }
   }
 
@@ -113,7 +112,7 @@ class App extends React.Component {
                   //                       this.chosenSchool = value.school;
                   //                       this.setState({ currentPage: "ClassPage" });}}
                   goToLogIn={() => this.setState({currentPage: "LogIn"})}
-                  arrayToDisplay={this.displayArray}/>;
+                  arrayToDisplay={this.state.displayArray}/>;
       case "ClassPage":
         return <ClassPage currentClass={{school: this.chosenSchool, class: this.chosenClass}} 
                           username={this.state.username}/>;
