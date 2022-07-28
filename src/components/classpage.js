@@ -19,10 +19,10 @@ class ClassPage extends React.Component {
       addBtn: "Add",
       currentClass: this.props.currentClass.class,
       currentSchool: this.props.currentClass.school,
-      classCode: (this.props.currentClass.class + " @ " + this.props.currentClass.school)
+      classCode: (this.props.currentClass.class + " @ " + this.props.currentClass.school),
+      gotNotes: []
     }
     this.gotDiscussions = [];
-    this.gotNotes = [];
     this.gotQIDs = [];
     this.btnDisabled = !this.props.isLoggedIn;
   }
@@ -41,7 +41,7 @@ class ClassPage extends React.Component {
     const notSnap = await getDoc(notRef);
     console.log("Getting Notes..");
     let nArray = notSnap.data().nNames;
-    this.gotNotes = nArray;
+    this.setState({gotNotes: nArray});
     return nArray;
   }
 
@@ -57,7 +57,7 @@ class ClassPage extends React.Component {
                               classCode={this.state.classCode}
                               username={this.props.username}/>;
       case "Notes":
-        return <NotesRepo nNames={this.gotNotes}
+        return <NotesRepo nNames={this.state.gotNotes}
                           classCode={this.state.classCode}
                           username={this.props.username}/>;
     }
@@ -87,7 +87,7 @@ class ClassPage extends React.Component {
     if (!this.first) {
       this.first = true;
       this.gotDiscussions = await this.getDiscussions();
-      this.gotNotes = await this.getNotes();}
+      this.setState({gotNotes: await this.getNotes()});}
   }
 
   async changeMyClass() {
@@ -149,7 +149,7 @@ class ClassPage extends React.Component {
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link onClick={async () => {this.setState({ cTab: "Notes" });
-                                          this.gotNotes = await this.getNotes();}} eventKey="link-3">Notes Repository</Nav.Link>
+                                          await this.getNotes();}} eventKey="link-3">Notes Repository</Nav.Link>
             </Nav.Item>
         </Nav>
         

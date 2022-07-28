@@ -194,9 +194,12 @@ div.scrollNotes {
   padding: 5px;
 }
 
-
 #addToClass:hover {
   background-color: #003f3f !important;
+}
+
+.createNote {
+  max-width: none !important;
 }
 
 @media screen and (min-width: 1200px) {
