@@ -2,17 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -150,6 +139,7 @@ input {
   border: 1px solid black;
   flex-grow: 1;
   width: 50vw;
+  max-width: 700px;
 }
 
 #send-btn {
@@ -209,7 +199,13 @@ div.scrollNotes {
   background-color: #003f3f !important;
 }
 
-@media screen and (max-width: 411px) {
+@media screen and (min-width: 1200px) {
+  #addToClass {
+    margin-right: 20vw !important;
+  }
+}
+
+@media screen and (max-width: 415px) {
   #navlink {
     font-size: 11px !important;
   }

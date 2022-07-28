@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Input from "./Input";
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, addDoc, collection, updateDoc, arrayUnion, arrayRemove, deleteDoc } from "firebase/firestore";
 import { db, auth } from '../firebase';
 
 
@@ -20,7 +20,8 @@ class Discussions extends Component {
       qCards: [],
       qExpanded: {},
       disCommentArray: [],
-      voted: false
+      voted: false,
+      flagbtn: "Flag"
     }
     this.btnDisabled = true;
   }
@@ -59,7 +60,8 @@ class Discussions extends Component {
     let qObj = {title: qtitle,
                 poster: qposter,
                 description: qdescription,
-                docID: docID};
+                docID: docID,
+                flags: []};
     let aArray = qSnap.data().aArray;
     let _disCommentArray = [];
     if (aArray !== undefined) {
@@ -93,7 +95,8 @@ class Discussions extends Component {
             college="University of South Carolina" 
             question={qNames[i].split(" #-# ")[0]}
             didClick={() => {this.setState({content: "Card"});
-                              this.getAnswers(qNames[i].split(" #-# ")[1]);}}/>
+                              this.getAnswers(qNames[i].split(" #-# ")[1]);
+                              }}/>
           </Col>);
     }
     qArray = qArray.reverse();
@@ -109,10 +112,63 @@ class Discussions extends Component {
     this.updateDiscussions();
   }
 
+  async getFlagged(docID) {
+    if (this.props.username === this.state.qExpanded.poster) {
+      this.setState({flagbtn: "Delete"})
+    } else {
+      const disRef = doc(db, "discussions", this.props.classCode, "questions", docID);
+      const disSnap = await getDoc(disRef);
+      if (disSnap.data().flags.includes(auth.currentUser.uid)) {
+        this.setState({flagbtn: "Flagged"});
+      }
+    }
+  }
+
+  async putFlag(classCode, docID, titleAndID) {
+    const qRef = doc(db, "discussions", classCode, "questions", docID);
+    const dRef = doc(db, "discussions", classCode);
+    if (this.state.flagbtn === "Flag") {
+      await updateDoc(qRef, {
+        flags: arrayUnion(auth.currentUser.uid)
+      });
+      this.setState({flagbtn: "Flagged"})
+    } else if (this.state.flagbtn === "Flagged") {
+      await updateDoc(qRef, {
+        flags: arrayRemove(auth.currentUser.uid)
+      });
+      this.setState({flagbtn: "Flag"})
+    } else {
+      await deleteDoc(qRef);
+      await updateDoc(dRef, {
+        qNames: arrayRemove(titleAndID)
+      });
+      await this.updateDiscussions();
+      this.setState({content: "Cards"});
+    }
+    let qSnap = await getDoc(qRef);
+    if (qSnap.data().flags.length >= 3) {
+      await deleteDoc(qRef);
+      await updateDoc(dRef, {
+        qNames: arrayRemove(titleAndID)
+      });
+      await this.updateDiscussions();
+      this.setState({content: "Cards"});
+    }
+  }
+
   componentDidMount() {
     this.getQNames();
     if (auth.currentUser !== null) {
       this.btnDisabled = false;
+    }
+  }
+
+  first = true;
+
+  componentDidUpdate() {
+    if (this.state.qExpanded.poster !== undefined && this.first) {
+      this.getFlagged(this.state.qExpanded.docID);
+      this.first = false;
     }
   }
 
@@ -170,7 +226,8 @@ class Discussions extends Component {
         return <>
             <button 
               onClick={() => {this.updateDiscussions();
-                              this.setState({content: "Cards", voted: false, qExpanded: {}});}}
+                              this.setState({content: "Cards", voted: false, qExpanded: {}});
+                              this.first = true;}}
               style={{float: "left", marginRight: "5px"}}
               className="login-btn"
               >Back</button>
@@ -183,6 +240,8 @@ class Discussions extends Component {
               classCode={this.props.classCode}
               docID={this.state.qExpanded.docID}
               updateAnswers={() => this.getAnswers(this.state.qExpanded.docID)}
+              flagBtn={this.state.flagbtn}
+              updateFlag={(titleAndID) => this.putFlag(this.props.classCode, this.state.qExpanded.docID, titleAndID)}
               />
           </>;
       case "Create":
@@ -263,12 +322,21 @@ async function postAnswer(value, username, classCode, docID) {
   });
 }
 
+
+
 function DiscussionCardExpanded(props) {
   return (<>
           <Card style={{
             textAlign: "left"
             }}>
-            <Card.Header style={{textAlign: "right", fontSize: "15px"}}>{props.poster}</Card.Header>
+            <Card.Header style={{textAlign: "right", fontSize: "15px"}}>
+              <button 
+                style={{marginRight: "20px"}} 
+                className='login-btn'
+                onClick={() => props.updateFlag(props.question + " #-# " + props.docID)}>
+                  {props.flagBtn}
+              </button>
+              {props.poster}</Card.Header>
             <Card.Body>
                 <Card.Title>{props.question}</Card.Title>
                 <Card.Text>

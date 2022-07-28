@@ -4,7 +4,6 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import CreatableSelect from 'react-select/creatable';
-import App from "../App";
 import { doc } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { collection, query, where, getDocs, setDoc } from "firebase/firestore";

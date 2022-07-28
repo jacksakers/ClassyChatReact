@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchArea from "./components/search";
@@ -115,7 +114,8 @@ class App extends React.Component {
                   arrayToDisplay={this.state.displayArray}/>;
       case "ClassPage":
         return <ClassPage currentClass={{school: this.chosenSchool, class: this.chosenClass}} 
-                          username={this.state.username}/>;
+                          username={this.state.username}
+                          isLoggedIn={(auth.currentUser !== null)}/>;
       case "LogIn":
         if (!auth.currentUser) {
           return <LogIn didLogIn={(uName) => this.handleLogIn(uName)}/>;

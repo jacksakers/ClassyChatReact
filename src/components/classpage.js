@@ -24,7 +24,7 @@ class ClassPage extends React.Component {
     this.gotDiscussions = [];
     this.gotNotes = [];
     this.gotQIDs = [];
-    this.btnDisabled = true;
+    this.btnDisabled = !this.props.isLoggedIn;
   }
 
   async getDiscussions() {
@@ -32,6 +32,7 @@ class ClassPage extends React.Component {
     const disSnap = await getDoc(disRef);
     console.log("Getting Discussions");
     let qArray = disSnap.data().qNames;
+    this.gotDiscussions = qArray;
     return qArray;
   }
 
@@ -40,6 +41,7 @@ class ClassPage extends React.Component {
     const notSnap = await getDoc(notRef);
     console.log("Getting Notes..");
     let nArray = notSnap.data().nNames;
+    this.gotNotes = nArray;
     return nArray;
   }
 
@@ -142,8 +144,8 @@ class ClassPage extends React.Component {
                   eventKey="link-1">Live Chat</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link onClick={() => {this.setState({ cTab: "Discussion" });
-                                          this.getDiscussions();}} eventKey="link-2">Discussions</Nav.Link>
+                <Nav.Link onClick={async () => {this.setState({ cTab: "Discussion" });
+                                          await this.getDiscussions();}} eventKey="link-2">Discussions</Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link onClick={async () => {this.setState({ cTab: "Notes" });

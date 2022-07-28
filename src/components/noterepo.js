@@ -232,13 +232,29 @@ function NotesCard(props) {
 function NotesCardExpanded(props) {
   let showArray = [];
   for (let i in props.content) {
-    showArray.push(
-      <a href={props.content[i]} target="_blank" rel="noreferrer">
-      <img 
-        src={props.content[i]} 
-        style={{maxHeight: "51.5vh"}}
-        alt=""></img>
-      </a>);
+    let testArray = props.content[i].split(".");
+    let pdfTester = false;
+    for (let i in testArray) {
+      let splitArray = testArray[i].split("?");
+      pdfTester = splitArray.includes("pdf");
+    }
+    if (pdfTester) {
+      showArray.push(<>
+        <iframe 
+          src={props.content[i]} 
+          style={{height: "49vh"}}
+          title={props.title}></iframe>
+        <a href={props.content[i]} target="_blank" rel="noreferrer">Open In New Window</a>
+        </>);
+    } else {
+      showArray.push(
+        <a href={props.content[i]} target="_blank" rel="noreferrer">
+        <img 
+          src={props.content[i]} 
+          style={{maxHeight: "51.5vh"}}
+          alt=""></img>
+        </a>);
+    }
   }
   return (<Card style={{
           textAlign: "left"

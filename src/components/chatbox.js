@@ -11,7 +11,7 @@ class ChatBox extends Component {
       super(props);
       this.state = {
         messages: [{
-              text: "New message",
+              text: "Loading Messages...",
               member: {
                 color: "blue",
                 username: "jaksak"
