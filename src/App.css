@@ -66,6 +66,11 @@
   -moz-border-radius: 15px;
 }
 
+.card {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
 #vote {
   margin-right: 5px;
   margin-left: 5px;
