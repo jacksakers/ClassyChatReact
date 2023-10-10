@@ -119,6 +119,11 @@ class SearchArea extends React.Component {
                   <h3 style={{fontSize: "20px"}}>Don't see your class or school?</h3> 
                   <h3 style={{fontSize: "20px"}}>Add it by typing it in and clicking "Create"</h3>
                 </Row>
+                <Row style={{marginTop: "40px"}}>
+                  <h3 style={{fontSize: "15px"}}>Hey Guys! Developer here,</h3> 
+                  <h3 style={{fontSize: "15px"}}>Thanks for checking out ClassyChat!</h3>
+                  <h3 style={{fontSize: "15px"}}>This website is still a work in progress and there will be new features added regularly!</h3>  
+                </Row>
             </Container>
         );
   }
